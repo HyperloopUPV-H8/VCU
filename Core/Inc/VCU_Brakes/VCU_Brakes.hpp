@@ -6,6 +6,7 @@
 #include "VCU_Sensors/VCU_RegulatorSensor.hpp"
 #include "VCU_Sensors/VCU_Reed.hpp"
 #include "VCU_Data/VCU_Data.hpp"
+#include "VCU_Pinout/Pinout.hpp"
 
 
 namespace VCU{
@@ -24,6 +25,8 @@ namespace VCU{
         constexpr static double low_pressure_sensor1_offset = 0.0f;
         constexpr static double low_pressure_sensor2_offset = 0.0f;
 
+        constexpr static float operating_pressure = 8.0f;
+
 
         private:
             Data<VCU::VCU_MODE::BRAKE_VALIDATION>& data;
@@ -31,6 +34,9 @@ namespace VCU{
             ValveActuator valve_actuator;
             RegulatorActuator regulator_actuator;
             RegulatorSensor regulator_sensor;
+
+            DigitalSensor emergency_tape;
+            DigitalOutput emergency_tape_enable;
             
             Reed reed1;
             Reed reed2;
@@ -40,52 +46,79 @@ namespace VCU{
             LinearSensor temperature_sensor1;
             LinearSensor temperature_sensor2;
 
-            LinearSensor high_pressure_sensor1;
+            LinearSensor high_pressure_sensor;
             LinearSensor low_pressure_sensor1;
             LinearSensor low_pressure_sensor2;
 
         public:
             Brakes(Data<VCU::VCU_MODE::BRAKE_VALIDATION>& data):
+                valve_actuator(Pinout::VALVE, &data.valve_state),
+                regulator_actuator(Pinout::REGULATOR_OUT, &data.regulator_reference_pressure),
+                regulator_sensor(Pinout::REGULATOR_IN, &data.regulator_real_pressure),
 
-                valve_actuator(valve_pin, &data.valve_state),
-                regulator_actuator(regulator_output, &data.regulator_reference_pressure),
-                regulator_sensor(regulator_input, &data.regulator_real_pressure),
-                reed1(reed1, &data.reed1),
-                reed2(reed2, &data.reed2),
-                reed3(reed3, &data.reed3),
-                reed4(reed4, &data.reed4),
-                temperature_sensor1(temperature1, 0.0f, 0.0f, &data.bottle_temperature1),
-                temperature_sensor2(temperature2, 0.0f, 0.0f, &data.bottle_temperature2),
-                high_pressure_sensor1(high_pressure1, 0.0f, 0.0f, &data.high_pressure1),
-                low_pressure_sensor1(low_pressure1, 0.0f, 0.0f, &data.low_pressure1),
-                low_pressure_sensor2(low_pressure2, 0.0f, 0.0f, &data.low_pressure2),
+                emergency_tape(Pinout::EMERGENCY_TAPE, &data.emergency_tape),
+                emergency_tape_enable(Pinout::EMERGENCY_TAPE_ENABLE),
+
+                reed1(Pinout::REED1, &data.reed1),
+                reed2(Pinout::REED2, &data.reed2),
+                reed3(Pinout::REED3, &data.reed3),
+                reed4(Pinout::REED4, &data.reed4),
+
+                temperature_sensor1(Pinout::BOTTLE_TEMP1, temperature_sensors_slope, temperature_sensor1_offset, &data.bottle_temperature1),
+                temperature_sensor2(Pinout::BOTTLE_TEMP2, temperature_sensors_slope, temperature_sensor2_offset, &data.bottle_temperature2),
+               
+                high_pressure_sensor(Pinout::HIGH_PRESSURE, high_pressure_sensor_slope, high_pressure_sensor_offset, &data.high_pressure1),
+                low_pressure_sensor1(Pinout::LOW_PRESSURE1, low_pressure_sensors_slope, low_pressure_sensor1_offset, &data.low_pressure1),
+                low_pressure_sensor2(Pinout::LOW_PRESSURE2, low_pressure_sensors_slope, low_pressure_sensor2_offset, &data.low_pressure2),
+                
                 data(data)
             {}
 
-            void init(){
-                //TODO:
-                //Hacer una primera lectura de todos los valores
-                //Poner regulador a 8 bares
-                //Poner valvula en closed (estado 0)
-                //Volver a leer todos los valores
-            }
-
             void read(){
-                //TODO:
-                //Leer todo
                 regulator_sensor.read();
+                
+                emergency_tape.read();
+
                 reed1.read();
                 reed2.read();
                 reed3.read();
                 reed4.read();
+
+                temperature_sensor1.read();
+                temperature_sensor2.read(); 
+
+                high_pressure_sensor.read();
+                low_pressure_sensor1.read();
+                low_pressure_sensor2.read();
             }
 
             void brake(){
-
+                valve_actuator.close();
+                data.valve_state = VALVE_STATE::CLOSED;
             }
 
             void not_brake(){
-
+                valve_actuator.open();
+                data.valve_state = VALVE_STATE::OPEN;
             }
+
+            void disable_emergency_brakes(){
+                emergency_tape_enable.turn_on();
+                data.emergeny_tape_enable = PinState::ON;
+            }
+
+            void enable_emergency_brakes(){
+                emergency_tape_enable.turn_off();
+                data.emergeny_tape_enable = PinState::OFF;
+            }
+
+            void init(){
+                read();
+                enable_emergency_brakes();
+                brake();
+                regulator_actuator.set_pressure(operating_pressure);
+                read();
+            }
+
     };
 }

@@ -2,8 +2,8 @@
 
 namespace VCU{
     enum VALVE_STATE{
-        OPEN,
         CLOSED,
+        OPEN,
     };
 
     enum REED_STATE{

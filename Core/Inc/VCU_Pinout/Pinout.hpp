@@ -21,6 +21,14 @@ namespace VCU{
         constexpr Pin& REGULATOR_IN = PA4;
         constexpr Pin& REGULATOR_OUT = PB9;
 
+        //Valve 
+        constexpr Pin& VALVE = PE7;
+
+        //Pressure
+        constexpr Pin& HIGH_PRESSURE = PA1;
+        constexpr Pin& LOW_PRESSURE1 = PA2;
+        constexpr Pin& LOW_PRESSURE2 = PA3;
+
         //Tapes
         constexpr Pin& TAPE1 = PC6;
         constexpr Pin& TAPE2 = PC7;

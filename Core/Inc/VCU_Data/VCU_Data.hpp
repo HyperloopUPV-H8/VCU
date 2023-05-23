@@ -14,6 +14,9 @@ namespace VCU{
         double regulator_real_pressure = 0.0f;
         float regulator_reference_pressure = 0.0f;
 
+        PinState emergeny_tape_enable = PinState::OFF;
+        PinState emergency_tape = PinState::OFF;
+
         double high_pressure1 = 0.0f;
         double low_pressure1 = 0.0f;
         double low_pressure2 = 0.0f;
