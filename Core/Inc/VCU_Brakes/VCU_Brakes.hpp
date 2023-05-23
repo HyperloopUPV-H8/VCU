@@ -95,11 +95,19 @@ namespace VCU{
             void brake(){
                 valve_actuator.close();
                 data.valve_state = VALVE_STATE::CLOSED;
+
+                Time::set_timeout(1, [&](){
+                    check_reeds();
+                });
             }
 
             void not_brake(){
                 valve_actuator.open();
                 data.valve_state = VALVE_STATE::OPEN;
+
+                Time::set_timeout(1, [&](){
+                    check_reeds();
+                });
             }
 
             void disable_emergency_brakes(){
@@ -110,6 +118,10 @@ namespace VCU{
             void enable_emergency_brakes(){
                 emergency_tape_enable.turn_off();
                 data.emergeny_tape_enable = PinState::OFF;
+            }
+
+            void check_reeds(){
+                data.reeds_ok = ((data.reed1 == data.reed2) == data.reed3) == data.reed4;
             }
 
             void init(){

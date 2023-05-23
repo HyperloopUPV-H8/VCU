@@ -28,6 +28,7 @@ namespace VCU{
         REED_STATE reed2 = REED_STATE::RETRACTED;
         REED_STATE reed3 = REED_STATE::RETRACTED;
         REED_STATE reed4 = REED_STATE::RETRACTED;
+        bool reeds_ok = true;
 
         VALVE_STATE valve_state = VALVE_STATE::CLOSED;
     };
