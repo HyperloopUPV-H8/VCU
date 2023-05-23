@@ -1,48 +1,11 @@
 #pragma once
+
 #include "VCU_Pinout/Pinout.hpp"
-
-namespace VCU{
-    namespace Pinout{
-        //VEHICLE LEDs
-        constexpr Pin& LEDR = PF1;
-        constexpr Pin& LEDG = PF2;
-        constexpr Pin& LEDB = PF3;
-
-        //Temperatures
-        constexpr Pin& BOTTLE_TEMP1 = PF6;
-        constexpr Pin& BOTTLE_TEMP2 = PF7;
-        constexpr Pin& BOTTLE_TEMP3 = PF8;
-        constexpr Pin& BOTTLE_TEMP4 = PF9;
-
-        //Environment
-        constexpr Pin& ENVIRONMENT_TEMPERATURE = PC2;
-        constexpr Pin& ENVIRONMENT_PRESSURE = PA0;
-
-        //Regulator
-        constexpr Pin& REGULATOR_IN = PA4;
-        constexpr Pin& REGULATOR_OUT = PB9;
-
-        //Tapes
-        constexpr Pin& TAPE1 = PC6;
-        constexpr Pin& TAPE2 = PC7;
-        constexpr Pin& EMERGENCY_TAPE  = PE0;
-        constexpr Pin& EMERGENCY_TAPE_ENABLE = PG1;
-
-        //IMU
-        constexpr Pin& IMU_INTERRUPT = PD2;
-        constexpr Pin& IMU_CHIP_SELECT = PD3;
-
-        //Board LEDs
-        constexpr Pin& SLEEP_LED = PG4;
-        constexpr Pin& FLASH_LED = PG5;
-        constexpr Pin& CAN_LED = PG6;
-        constexpr Pin& FAULT_LED = PG7;
-        constexpr Pin& OPERATIONAL_LED = PG8;
-
-        //Reeds
-        constexpr Pin& REED1 = PD11;
-        constexpr Pin& REED2 = PD10;
-        constexpr Pin& REED3 = PE3;
-        constexpr Pin& REED4 = PE4;
-    }
-}
+#include "VCU_Mode/VCU_Mode.hpp"
+#include "VCU_Data/VCU_Data.hpp"
+#include "VCU_Sensors/VCU_RegulatorSensor.hpp"
+#include "VCU_Sensors/VCU_Reed.hpp"
+#include "VCU_Actuators/VCU_RegulatorActuator.hpp"
+#include "VCU_Actuators/VCU_ValveActuator.hpp"
+#include "VCU_Brakes/VCU_Brakes.hpp"
+#include "VCU_Utilities/VCU_Types.hpp"
