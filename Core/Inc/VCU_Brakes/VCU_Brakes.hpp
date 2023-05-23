@@ -27,7 +27,6 @@ namespace VCU{
 
         constexpr static float operating_pressure = 8.0f;
 
-
         private:
             Data<VCU::VCU_MODE::BRAKE_VALIDATION>& data;
 
@@ -35,7 +34,7 @@ namespace VCU{
             RegulatorActuator regulator_actuator;
             RegulatorSensor regulator_sensor;
 
-            DigitalSensor emergency_tape;//TODO: arreglar
+            SensorInterrupt emergency_tape; 
             DigitalOutput emergency_tape_enable;
             
             Reed reed1;
@@ -52,11 +51,13 @@ namespace VCU{
 
         public:
             Brakes(Data<VCU::VCU_MODE::BRAKE_VALIDATION>& data):
+                data(data),
+
                 valve_actuator(Pinout::VALVE, &data.valve_state),
                 regulator_actuator(Pinout::REGULATOR_OUT, &data.regulator_reference_pressure),
                 regulator_sensor(Pinout::REGULATOR_IN, &data.regulator_real_pressure),
 
-                emergency_tape(Pinout::EMERGENCY_TAPE, &data.emergency_tape),
+                emergency_tape(Pinout::EMERGENCY_TAPE, [&](){emergency_tape.read();}, &data.emergency_tape),
                 emergency_tape_enable(Pinout::EMERGENCY_TAPE_ENABLE),
 
                 reed1(Pinout::REED1, &data.reed1),
@@ -69,9 +70,7 @@ namespace VCU{
                
                 high_pressure_sensor(Pinout::HIGH_PRESSURE, high_pressure_sensor_slope, high_pressure_sensor_offset, &data.high_pressure1),
                 low_pressure_sensor1(Pinout::LOW_PRESSURE1, low_pressure_sensors_slope, low_pressure_sensor1_offset, &data.low_pressure1),
-                low_pressure_sensor2(Pinout::LOW_PRESSURE2, low_pressure_sensors_slope, low_pressure_sensor2_offset, &data.low_pressure2),
-                
-                data(data)
+                low_pressure_sensor2(Pinout::LOW_PRESSURE2, low_pressure_sensors_slope, low_pressure_sensor2_offset, &data.low_pressure2)
             {}
 
             void read(){
