@@ -3,7 +3,7 @@
 
 #include "ST-LIB.hpp"
 #include "Runes/Runes.hpp"
-
+#include "VCU.hpp"
 int main(void)
 {
 	STLIB::start();
