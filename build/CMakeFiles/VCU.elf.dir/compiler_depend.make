@@ -432,7 +432,8 @@ CMakeFiles/VCU.elf.dir/Core/Src/main.cpp.obj: ../Core/Src/main.cpp \
   ../Core/Src/Runes/Pins.hpp \
   ../Core/Inc/VCU.hpp \
   ../Core/Inc/VCU_Pinout/Pinout.hpp \
-  ../Core/Inc/VCU_Mode/VCU_Mode.hpp
+  ../Core/Inc/VCU_Mode/VCU_Mode.hpp \
+  ../Core/Inc/VCU_Data/VCU_Data.hpp
 
 CMakeFiles/VCU.elf.dir/Core/Src/stm32h7xx_hal_msp.c.obj: ../Core/Src/stm32h7xx_hal_msp.c \
   ../Core/Inc/main.h \
@@ -12210,6 +12211,12 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 ../Middlewares/Third_Party/LwIP/src/include/lwip/icmp.h:
 
+../Middlewares/Third_Party/LwIP/src/include/lwip/prot/icmp6.h:
+
+/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/hashtable.h:
+
+../Middlewares/Third_Party/LwIP/src/core/dns.c:
+
 ../Middlewares/Third_Party/LwIP/src/include/lwip/ip_addr.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/sys/reent.h:
@@ -12568,6 +12575,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/stl_iterator.h:
 
+../Core/Inc/VCU_Data/VCU_Data.hpp:
+
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/stl_construct.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/uniform_int_dist.h:
@@ -12575,12 +12584,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/basic_ios.tcc:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/streambuf.tcc:
-
-/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/hashtable.h:
-
-../Middlewares/Third_Party/LwIP/src/core/dns.c:
-
-../Middlewares/Third_Party/LwIP/src/include/lwip/prot/icmp6.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/new:
 
