@@ -35,7 +35,7 @@ namespace VCU{
             RegulatorActuator regulator_actuator;
             RegulatorSensor regulator_sensor;
 
-            DigitalSensor emergency_tape;
+            DigitalSensor emergency_tape;//TODO: arreglar
             DigitalOutput emergency_tape_enable;
             
             Reed reed1;
