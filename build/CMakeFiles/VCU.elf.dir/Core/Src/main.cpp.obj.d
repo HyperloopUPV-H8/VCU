@@ -429,4 +429,5 @@ CMakeFiles/VCU.elf.dir/Core/Src/main.cpp.obj: \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Src/Runes/Pins.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Pinout/Pinout.hpp \
- /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Mode/VCU_Mode.hpp
+ /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Mode/VCU_Mode.hpp \
+ /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Data/VCU_Data.hpp

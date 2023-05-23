@@ -11,10 +11,19 @@ namespace VCU{
         double regulator_real_pressure = 0.0f;
         double regulator_reference_pressure = 0.0f;
 
+        double high_pressure1 = 0.0f;
+        double low_pressure1 = 0.0f;
+        double low_pressure2 = 0.0f;
+
+        double bottle_temperature1 = 0.0f;
+        double bottle_temperature2 = 0.0f;
+
         bool reed1 = false;
         bool reed2 = false;
         bool reed3 = false;
         bool reed4 = false;
+
+        bool valve_state = false;
     };
 
     template<>
@@ -23,9 +32,18 @@ namespace VCU{
         double regulator_real_pressure = 0.0f;
         double regulator_reference_pressure = 0.0f;
 
+        double high_pressure1 = 0.0f;
+        double low_pressure1 = 0.0f;
+        double low_pressure2 = 0.0f;
+
+        double bottle_temperature1 = 0.0f;
+        double bottle_temperature2 = 0.0f;
+
         bool reed1 = false;
         bool reed2 = false;
         bool reed3 = false;
         bool reed4 = false;
+
+        bool valve_state = false;
     };
 }
