@@ -428,11 +428,12 @@ CMakeFiles/VCU.elf.dir/Core/Src/main.cpp.obj: ../Core/Src/main.cpp \
   /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/PI.hpp \
   /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/PID.hpp \
   /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/Saturator.hpp \
-  /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashStorer.hpp \
-  /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashVariable.hpp \
   ../Core/Src/Runes/Runes.hpp \
   ../Core/Src/Runes/Pins.hpp \
-  ../Core/Inc/VCU_Pinout/Pinout.hpp
+  ../Core/Inc/VCU.hpp \
+  ../Core/Inc/VCU_Pinout/Pinout.hpp \
+  ../Core/Inc/VCU_Actuators/RegulatorActuator.hpp \
+  ../Core/Inc/VCU_Sensors/RegulatorSensor.hpp
 
 CMakeFiles/VCU.elf.dir/Core/Src/stm32h7xx_hal_msp.c.obj: ../Core/Src/stm32h7xx_hal_msp.c \
   ../Core/Inc/main.h \
@@ -12212,6 +12213,12 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 ../Middlewares/Third_Party/LwIP/src/include/lwip/icmp.h:
 
+../Middlewares/Third_Party/LwIP/src/include/lwip/prot/icmp6.h:
+
+/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/hashtable.h:
+
+../Middlewares/Third_Party/LwIP/src/core/dns.c:
+
 ../Middlewares/Third_Party/LwIP/src/include/lwip/ip_addr.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/sys/reent.h:
@@ -12464,10 +12471,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/ext/type_traits.h:
 
-/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/algorithmfwd.h:
-
-/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/arm-none-eabi/thumb/v7e-m+dp/hard/bits/c++config.h:
-
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/type_traits:
 
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
@@ -12570,8 +12573,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/stl_iterator.h:
 
-/opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashStorer.hpp:
-
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/stl_construct.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/uniform_int_dist.h:
@@ -12579,12 +12580,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/basic_ios.tcc:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/streambuf.tcc:
-
-/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/hashtable.h:
-
-../Middlewares/Third_Party/LwIP/src/core/dns.c:
-
-../Middlewares/Third_Party/LwIP/src/include/lwip/prot/icmp6.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/new:
 
@@ -12816,6 +12811,12 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Protections/Boundary.hpp:
 
+/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/algorithmfwd.h:
+
+/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/arm-none-eabi/thumb/v7e-m+dp/hard/bits/c++config.h:
+
+../Core/Inc/VCU_Actuators/RegulatorActuator.hpp:
+
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/pstl/glue_algorithm_defs.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/pstl/execution_defs.h:
@@ -12873,8 +12874,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 /opt/malva/ST-LIB/Inc/HALAL/Models/Packets/Packet.hpp:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/random:
-
-/opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashVariable.hpp:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/random.h:
 
@@ -13044,6 +13043,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 ../Core/Src/Runes/Pins.hpp:
 
+../Core/Inc/VCU.hpp:
+
 ../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6_addr.c:
 
 ../Core/Src/stm32h7xx_it.c:
@@ -13123,6 +13124,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/iterator:
 
 ../LWIP/Target/ethernetif.c:
+
+../Core/Inc/VCU_Sensors/RegulatorSensor.hpp:
 
 ../LWIP/Target/ethernetif.h:
 
