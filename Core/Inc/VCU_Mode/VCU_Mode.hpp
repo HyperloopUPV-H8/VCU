@@ -1,10 +1,9 @@
 #pragma once
 
 namespace VCU{
-    enum MASTER_MODE{
-        LPU_VALIDATION,
-        TESTBENCH_1DOF,
-        VEHICLE_1DOF,
-        VEHICLE_5DOF,
+    enum VCU_MODE{
+        BRAKE_VALIDATION,
+        POSITION_VALIDATION,
+        VEHICLE,
 };
 }
