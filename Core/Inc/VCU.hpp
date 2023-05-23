@@ -1,4 +1,5 @@
 #pragma once
+
 #include "VCU_Pinout/Pinout.hpp"
 #include "VCU_Mode/VCU_Mode.hpp"
 #include "VCU_Data/VCU_Data.hpp"
@@ -8,4 +9,3 @@
 #include "VCU_Actuators/VCU_ValveActuator.hpp"
 #include "VCU_Brakes/VCU_Brakes.hpp"
 #include "VCU_Utilities/VCU_Types.hpp"
-
