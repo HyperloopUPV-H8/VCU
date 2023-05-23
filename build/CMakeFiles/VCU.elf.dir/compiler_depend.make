@@ -433,7 +433,13 @@ CMakeFiles/VCU.elf.dir/Core/Src/main.cpp.obj: ../Core/Src/main.cpp \
   ../Core/Inc/VCU.hpp \
   ../Core/Inc/VCU_Pinout/Pinout.hpp \
   ../Core/Inc/VCU_Mode/VCU_Mode.hpp \
-  ../Core/Inc/VCU_Data/VCU_Data.hpp
+  ../Core/Inc/VCU_Data/VCU_Data.hpp \
+  ../Core/Inc/VCU_Utilities/VCU_Types.hpp \
+  ../Core/Inc/VCU_Sensors/VCU_RegulatorSensor.hpp \
+  ../Core/Inc/VCU_Sensors/VCU_Reed.hpp \
+  ../Core/Inc/VCU_Actuators/VCU_RegulatorActuator.hpp \
+  ../Core/Inc/VCU_Actuators/VCU_ValveActuator.hpp \
+  ../Core/Inc/VCU_Brakes/VCU_Brakes.hpp
 
 CMakeFiles/VCU.elf.dir/Core/Src/stm32h7xx_hal_msp.c.obj: ../Core/Src/stm32h7xx_hal_msp.c \
   ../Core/Inc/main.h \
@@ -12065,6 +12071,12 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 ../Middlewares/Third_Party/LwIP/src/core/ipv6/nd6.c:
 
+../Middlewares/Third_Party/LwIP/src/include/lwip/icmp6.h:
+
+../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6.c:
+
+../Middlewares/Third_Party/LwIP/src/core/ipv6/inet6.c:
+
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/ext/atomicity.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/tr1/gamma.tcc:
@@ -12217,6 +12229,10 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 ../Middlewares/Third_Party/LwIP/src/core/dns.c:
 
+../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6_frag.c:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/memp.h:
+
 ../Middlewares/Third_Party/LwIP/src/include/lwip/ip_addr.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/sys/reent.h:
@@ -12361,6 +12377,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/sys/lock.h:
 
+../Core/Inc/VCU_Sensors/VCU_Reed.hpp:
+
 /opt/malva/ST-LIB/Inc/HALAL/Models/Packets/RawPacket.hpp:
 
 ../Drivers/CMSIS/Include/cmsis_version.h:
@@ -12396,8 +12414,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 ../Middlewares/Third_Party/LwIP/src/netif/ppp/pppol2tp.c:
 
 /opt/malva/ST-LIB/Inc/HALAL/Models/Packets/I2CPacket.hpp:
-
-/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/arm-none-eabi/thumb/v7e-m+dp/hard/bits/atomic_word.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/machine/stdlib.h:
 
@@ -12709,10 +12725,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/PID.hpp:
 
-../Middlewares/Third_Party/LwIP/src/include/lwip/memp.h:
-
-../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6_frag.c:
-
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/hash_bytes.h:
 
 ../Middlewares/Third_Party/LwIP/src/include/lwip/sio.h:
@@ -12815,6 +12827,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Protections/Boundary.hpp:
 
+../Core/Inc/VCU_Sensors/VCU_RegulatorSensor.hpp:
+
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/pstl/glue_algorithm_defs.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/pstl/execution_defs.h:
@@ -12840,6 +12854,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 ../Middlewares/Third_Party/LwIP/src/include/lwip/ethip6.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/stl_deque.h:
+
+../Core/Inc/VCU_Actuators/VCU_RegulatorActuator.hpp:
 
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_adc.h:
 
@@ -12897,6 +12913,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/ranges:
 
+../Core/Inc/VCU_Brakes/VCU_Brakes.hpp:
+
 ../Core/Src/system_stm32h7xx.c:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/cstdarg:
@@ -12928,8 +12946,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 ../Middlewares/Third_Party/LwIP/src/include/lwip/udp.h:
 
 ../Middlewares/Third_Party/LwIP/src/include/lwip/ip6.h:
-
-../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6.c:
 
 ../Middlewares/Third_Party/LwIP/src/include/lwip/prot/ip.h:
 
@@ -13046,6 +13062,18 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 ../Core/Src/Runes/Pins.hpp:
 
 ../Core/Inc/VCU.hpp:
+
+/usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/arm-none-eabi/thumb/v7e-m+dp/hard/bits/atomic_word.h:
+
+../Core/Inc/VCU_Utilities/VCU_Types.hpp:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/etharp.h:
+
+../Middlewares/Third_Party/LwIP/src/core/ip.c:
+
+../Middlewares/Third_Party/LwIP/src/include/lwip/ip4_frag.h:
+
+../Core/Inc/VCU_Actuators/VCU_ValveActuator.hpp:
 
 ../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6_addr.c:
 
@@ -13177,12 +13205,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 ../Middlewares/Third_Party/LwIP/src/include/netif/ppp/ppp_impl.h:
 
-../Middlewares/Third_Party/LwIP/src/include/lwip/etharp.h:
-
-../Middlewares/Third_Party/LwIP/src/core/ip.c:
-
-../Middlewares/Third_Party/LwIP/src/include/lwip/ip4_frag.h:
-
 ../Middlewares/Third_Party/LwIP/src/include/lwip/autoip.h:
 
 ../Middlewares/Third_Party/LwIP/src/core/ipv4/igmp.c:
@@ -13194,7 +13216,3 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 ../Middlewares/Third_Party/LwIP/src/core/ipv6/dhcp6.c:
 
 ../Middlewares/Third_Party/LwIP/src/core/ipv6/ethip6.c:
-
-../Middlewares/Third_Party/LwIP/src/core/ipv6/inet6.c:
-
-../Middlewares/Third_Party/LwIP/src/include/lwip/icmp6.h:
