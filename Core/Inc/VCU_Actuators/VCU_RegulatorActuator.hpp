@@ -10,12 +10,11 @@ namespace VCU{
         static constexpr float min_pressure = 0.0f;
         
         private:
-        Pin& pin;
         PWM pwm;
         float* pressure;
 
         public:
-            RegulatorActuator(Pin& pin, float* pressure): pin(pin), pwm(pin), pressure(pressure){
+            RegulatorActuator(Pin& pin, float* pressure): pwm(pin), pressure(pressure){
                 pwm.set_frequency(pwm_frequency);
                 pwm.set_duty_cycle(0.0f);
                 pwm.turn_on();
@@ -23,7 +22,7 @@ namespace VCU{
 
             void set_pressure(float value){
                 if(value < min_pressure || value > max_pressure){
-                    ErrorHandler("Pressure value out of range");
+                    ErrorHandler("Pressure value %f out of range, expected value between 0.0 and 10.0", *pressure);
                     return;
                 }
 
