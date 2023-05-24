@@ -4,23 +4,17 @@
 
 namespace VCU{
     class RegulatorSensor{
-        static constexpr double slope = 3;
-        static constexpr double offset = 0;
+        static constexpr double slope = 3.0;
+        static constexpr double offset = 0.0;
 
         private:
-        Pin& pin;
         LinearSensor sensor;
-        double* pressure;
 
         public:
-            RegulatorSensor(Pin& pin, double* pressure): pin(pin), sensor(pin, slope, offset, pressure), pressure(pressure){}
+            RegulatorSensor(Pin& pin, double* pressure): sensor(pin, slope, offset, pressure){}
 
             void read(){
                 sensor.read();  
             }            
-
-            float get_pressure(){
-                return *pressure;
-            }
     };
 }
