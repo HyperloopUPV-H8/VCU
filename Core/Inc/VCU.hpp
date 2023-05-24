@@ -5,6 +5,7 @@
 #include "VCU_Data/VCU_Data.hpp"
 #include "VCU_Sensors/VCU_RegulatorSensor.hpp"
 #include "VCU_Sensors/VCU_Reed.hpp"
+#include "VCU_Actuators/VCU_LedsActuator.hpp"
 #include "VCU_Actuators/VCU_RegulatorActuator.hpp"
 #include "VCU_Actuators/VCU_ValveActuator.hpp"
 #include "VCU_Brakes/VCU_Brakes.hpp"

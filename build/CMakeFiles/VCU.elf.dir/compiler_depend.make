@@ -437,6 +437,7 @@ CMakeFiles/VCU.elf.dir/Core/Src/main.cpp.obj: ../Core/Src/main.cpp \
   ../Core/Inc/VCU_Utilities/VCU_Types.hpp \
   ../Core/Inc/VCU_Sensors/VCU_RegulatorSensor.hpp \
   ../Core/Inc/VCU_Sensors/VCU_Reed.hpp \
+  ../Core/Inc/VCU_Actuators/VCU_LedsActuator.hpp \
   ../Core/Inc/VCU_Actuators/VCU_RegulatorActuator.hpp \
   ../Core/Inc/VCU_Actuators/VCU_ValveActuator.hpp \
   ../Core/Inc/VCU_Brakes/VCU_Brakes.hpp
@@ -12077,6 +12078,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 ../Middlewares/Third_Party/LwIP/src/core/ipv6/inet6.c:
 
+../Middlewares/Third_Party/LwIP/src/core/ipv6/icmp6.c:
+
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/ext/atomicity.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/tr1/gamma.tcc:
@@ -12156,8 +12159,6 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/refwrap.h:
 
 /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/FeedbackControlBlock.hpp:
-
-../Middlewares/Third_Party/LwIP/src/core/ipv6/icmp6.c:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/functional_hash.h:
 
@@ -13072,6 +13073,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 ../Middlewares/Third_Party/LwIP/src/core/ip.c:
 
 ../Middlewares/Third_Party/LwIP/src/include/lwip/ip4_frag.h:
+
+../Core/Inc/VCU_Actuators/VCU_LedsActuator.hpp:
 
 ../Core/Inc/VCU_Actuators/VCU_ValveActuator.hpp:
 
