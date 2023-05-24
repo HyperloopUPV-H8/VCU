@@ -432,6 +432,7 @@ CMakeFiles/VCU.elf.dir/Core/Src/main.cpp.obj: \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Mode/VCU_Mode.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Data/VCU_Data.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Utilities/VCU_Types.hpp \
+ /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Sensors/VCU_EnviromentalSensors.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Sensors/VCU_RegulatorSensor.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Sensors/VCU_Reed.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU_Actuators/VCU_RegulatorActuator.hpp \
