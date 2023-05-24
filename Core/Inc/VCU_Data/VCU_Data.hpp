@@ -59,5 +59,10 @@ namespace VCU{
 
         double enviroment_temperature = 0.0f;
         double enviremont_pressure = 0.0f;
+
+        double tapes_position = 0.0f;
+        double tapes_direction = 0.0f;
+        double tapes_speed = 0.0f;
+        double tapes_acceleration = 0.0f;
     };
 }
