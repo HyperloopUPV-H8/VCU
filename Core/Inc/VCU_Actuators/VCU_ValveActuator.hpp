@@ -17,10 +17,12 @@ namespace VCU{
 
             void close(){
                 digital_output.turn_off();
+                *valve_state = VALVE_STATE::CLOSED;
             }
 
             void open(){
                 digital_output.turn_on();
+                *valve_state = VALVE_STATE::OPEN;
             }    
     };
 }

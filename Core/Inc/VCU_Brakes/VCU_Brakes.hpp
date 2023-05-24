@@ -88,7 +88,7 @@ namespace VCU{
 
             void brake(){
                 valve_actuator.close();
-                data.valve_state = VALVE_STATE::CLOSED;
+                
 
                 Time::set_timeout(1, [&](){
                     check_reeds();
@@ -97,7 +97,6 @@ namespace VCU{
 
             void not_brake(){
                 valve_actuator.open();
-                data.valve_state = VALVE_STATE::OPEN;
 
                 Time::set_timeout(1, [&](){
                     check_reeds();
