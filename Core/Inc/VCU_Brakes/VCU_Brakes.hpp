@@ -78,11 +78,6 @@ namespace VCU{
                 
                 emergency_tape.read();
 
-                reed1.read();
-                reed2.read();
-                reed3.read();
-                reed4.read();
-
                 temperature_sensor1.read();
                 temperature_sensor2.read(); 
 
@@ -120,6 +115,10 @@ namespace VCU{
             }
 
             void check_reeds(){
+                reed1.read();
+                reed2.read();
+                reed3.read();
+                reed4.read();
                 data.reeds_ok = ((data.reed1 == data.reed2) == data.reed3) == data.reed4;
             }
 
