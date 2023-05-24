@@ -36,7 +36,7 @@ namespace VCU{
 
         private:
             float calculate_duty_cycle(float pressure){
-                return (pressure * 10.0f);
+                return (pressure * 10.0f); //TODO: No se hace asi, hay que revisarlo
             }
 
     };
