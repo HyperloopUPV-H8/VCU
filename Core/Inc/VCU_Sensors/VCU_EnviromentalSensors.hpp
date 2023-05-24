@@ -6,12 +6,12 @@
 namespace VCU{
     
     class EnvironmentalSensors{
-        constexpr static double temperature_sensor_slope = 0.0f;
-        constexpr static double temperature_sensor_offset = 0.0f;
+        constexpr static double temperature_sensor_slope = -0.000000413;
+        constexpr static double temperature_sensor_offset = 193.902439024;
 
-        constexpr static double pressure_sensor_slope = 0.0f;
-        constexpr static double pressure_sensor_offset = 0.0f;
-
+        constexpr static double pressure_sensor_slope = 0.000019091;
+        constexpr static double pressure_sensor_offset = -0.125;
+        
         private:
         Data<VCU::VCU_MODE::VEHICLE>& data;
 
