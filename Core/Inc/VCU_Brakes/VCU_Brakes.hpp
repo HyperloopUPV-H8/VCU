@@ -15,8 +15,6 @@ namespace VCU{
     template<>
     class Brakes<VCU::VCU_MODE::BRAKE_VALIDATION>{
         constexpr static uint16_t ntc_lookup_table_size = 256;
-        constexpr static double temperature_sensors_slope = 0.0f;
-        constexpr static double temperature_sensors_offset = 0.0f;
 
         constexpr static double high_pressure_sensor_slope = 0.006681691;
         constexpr static double high_pressure_sensor_offset = -43.75;
