@@ -11,19 +11,15 @@
 
 namespace VCU{
     template<VCU::VCU_MODE> class Brakes;
+    class Brakes<VCU::VCU_MODE::BRAKE_VALIDATION>{
+        constexpr static uint16_t ntc_lookup_table_size = 256;
 
-    template<>
-    class Brakes<VCU::VCU_MODE::VEHICLE>{
-        constexpr static double temperature_sensors_slope = 0.0f;
-        constexpr static double temperature_sensor1_offset = 0.0f;
-        constexpr static double temperature_sensor2_offset = 0.0f;
+        constexpr static double high_pressure_sensor_slope = 0.006681691;
+        constexpr static double high_pressure_sensor_offset = -43.75;
 
-        constexpr static double high_pressure_sensor_slope = 0.0f;
-        constexpr static double high_pressure_sensor_offset = 0.0f;
-
-        constexpr static double low_pressure_sensors_slope = 0.0f;
-        constexpr static double low_pressure_sensor1_offset = 0.0f;
-        constexpr static double low_pressure_sensor2_offset = 0.0f;
+        constexpr static double low_pressure_sensors_slope = 0.000190905;
+        constexpr static double low_pressure_sensors_offset = -1.25;
+      
 
         constexpr static float operating_pressure = 8.0f;
 
@@ -42,8 +38,10 @@ namespace VCU{
             Reed reed3;
             Reed reed4;
 
-            LinearSensor temperature_sensor1;
-            LinearSensor temperature_sensor2;
+            double ntc_lookup_table[ntc_lookup_table_size];
+
+            LookupSensor temperature_sensor1;
+            LookupSensor temperature_sensor2;
 
             LinearSensor high_pressure_sensor;
             LinearSensor low_pressure_sensor1;
@@ -65,12 +63,12 @@ namespace VCU{
                 reed3(Pinout::REED3, &data.reed3),
                 reed4(Pinout::REED4, &data.reed4),
 
-                temperature_sensor1(Pinout::BOTTLE_TEMP1, temperature_sensors_slope, temperature_sensor1_offset, &data.bottle_temperature1),
-                temperature_sensor2(Pinout::BOTTLE_TEMP2, temperature_sensors_slope, temperature_sensor2_offset, &data.bottle_temperature2),
+                temperature_sensor1(Pinout::BOTTLE_TEMP1, ntc_lookup_table, ntc_lookup_table_size, &data.bottle_temperature1),
+                temperature_sensor2(Pinout::BOTTLE_TEMP2, ntc_lookup_table, ntc_lookup_table_size, &data.bottle_temperature2),
                
                 high_pressure_sensor(Pinout::HIGH_PRESSURE, high_pressure_sensor_slope, high_pressure_sensor_offset, &data.high_pressure1),
-                low_pressure_sensor1(Pinout::LOW_PRESSURE1, low_pressure_sensors_slope, low_pressure_sensor1_offset, &data.low_pressure1),
-                low_pressure_sensor2(Pinout::LOW_PRESSURE2, low_pressure_sensors_slope, low_pressure_sensor2_offset, &data.low_pressure2)
+                low_pressure_sensor1(Pinout::LOW_PRESSURE1, low_pressure_sensors_slope, low_pressure_sensors_offset, &data.low_pressure1),
+                low_pressure_sensor2(Pinout::LOW_PRESSURE2, low_pressure_sensors_slope, low_pressure_sensors_offset, &data.low_pressure2)
             {}
 
             void read(){
