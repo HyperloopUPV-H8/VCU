@@ -15,7 +15,16 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "type": "shell",
+            "label": "Run project for board",
+            "command": "malva build --board -f . ",
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
+
     ],
     "version": "2.0.0"
 }
