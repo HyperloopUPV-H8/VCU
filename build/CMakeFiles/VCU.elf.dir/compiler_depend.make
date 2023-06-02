@@ -428,6 +428,8 @@ CMakeFiles/VCU.elf.dir/Core/Src/main.cpp.obj: ../Core/Src/main.cpp \
   /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/PI.hpp \
   /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/PID.hpp \
   /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/Saturator.hpp \
+  /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashStorer.hpp \
+  /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashVariable.hpp \
   ../Core/Src/Runes/Runes.hpp \
   ../Core/Src/Runes/Pins.hpp \
   ../Core/Inc/VCU.hpp \
@@ -12080,6 +12082,10 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 ../Middlewares/Third_Party/LwIP/src/core/ipv6/icmp6.c:
 
+../Middlewares/Third_Party/LwIP/src/core/ipv6/ethip6.c:
+
+../Middlewares/Third_Party/LwIP/src/core/ipv6/dhcp6.c:
+
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/ext/atomicity.h:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/tr1/gamma.tcc:
@@ -12592,6 +12598,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/stl_iterator.h:
 
+/opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashStorer.hpp:
+
 ../Core/Inc/VCU_Data/VCU_Data.hpp:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/stl_construct.h:
@@ -12893,6 +12901,8 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 /opt/malva/ST-LIB/Inc/HALAL/Models/Packets/Packet.hpp:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/random:
+
+/opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashVariable.hpp:
 
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/bits/random.h:
 
@@ -13215,7 +13225,3 @@ CMakeFiles/VCU.elf.dir/Middlewares/Third_Party/LwIP/src/netif/zepif.c.obj: ../Mi
 /usr/share/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/12.2.1/pstl/glue_numeric_defs.h:
 
 ../Middlewares/Third_Party/LwIP/src/core/ipv4/ip4.c:
-
-../Middlewares/Third_Party/LwIP/src/core/ipv6/dhcp6.c:
-
-../Middlewares/Third_Party/LwIP/src/core/ipv6/ethip6.c:

@@ -13,7 +13,7 @@ namespace VCU{
     template<VCU::VCU_MODE> class Brakes;
 
     template<>
-    class Brakes<VCU::VCU_MODE::BRAKE_VALIDATION>{
+    class Brakes<VCU::VCU_MODE::VEHICLE>{
         constexpr static double temperature_sensors_slope = 0.0f;
         constexpr static double temperature_sensor1_offset = 0.0f;
         constexpr static double temperature_sensor2_offset = 0.0f;
@@ -28,7 +28,7 @@ namespace VCU{
         constexpr static float operating_pressure = 8.0f;
 
         private:
-            Data<VCU::VCU_MODE::BRAKE_VALIDATION>& data;
+            Data<VCU::VCU_MODE::VEHICLE>& data;
 
             ValveActuator valve_actuator;
             RegulatorActuator regulator_actuator;
@@ -50,7 +50,7 @@ namespace VCU{
             LinearSensor low_pressure_sensor2;
 
         public:
-            Brakes(Data<VCU::VCU_MODE::BRAKE_VALIDATION>& data):
+            Brakes(Data<VCU::VCU_MODE::VEHICLE>& data):
                 data(data),
 
                 valve_actuator(Pinout::VALVE, &data.valve_state),

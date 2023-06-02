@@ -425,6 +425,8 @@ CMakeFiles/VCU.elf.dir/Core/Src/main.cpp.obj: \
  /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/PI.hpp \
  /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/PID.hpp \
  /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/Control/Blocks/Saturator.hpp \
+ /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashStorer.hpp \
+ /opt/malva/ST-LIB/Inc/ST-LIB_HIGH/FlashStorer/FlashVariable.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Src/Runes/Runes.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Src/Runes/Pins.hpp \
  /home/predawnia/Desktop/Hyperloop\ UPV/H8/VCU/Core/Inc/VCU.hpp \
