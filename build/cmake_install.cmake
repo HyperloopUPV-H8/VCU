@@ -1,4 +1,4 @@
-# Install script for directory: /home/predawnia/Desktop/Hyperloop UPV/H8/VCU
+# Install script for directory: /home/stefancostea/Documents/VCU
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -51,5 +51,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/predawnia/Desktop/Hyperloop UPV/H8/VCU/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/stefancostea/Documents/VCU/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

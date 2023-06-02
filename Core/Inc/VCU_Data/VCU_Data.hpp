@@ -56,5 +56,8 @@ namespace VCU{
         bool reeds_ok = true;
 
         VALVE_STATE valve_state = VALVE_STATE::CLOSED;
+
+        double enviroment_temperature = 0.0f;
+        double enviremont_pressure = 0.0f;
     };
 }

@@ -4,8 +4,8 @@
 
 namespace VCU{
     class RegulatorSensor{
-        static constexpr double slope = 3.0;
-        static constexpr double offset = 0.0;
+        static constexpr double slope = 0.000190738;
+        static constexpr double offset = -2.5;
 
         private:
         LinearSensor sensor;
