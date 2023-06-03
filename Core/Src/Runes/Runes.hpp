@@ -157,30 +157,11 @@ vector<reference_wrapper<TimerPeripheral>> TimerPeripheral::timers = {
 #define PHASED TimerPeripheral::PWM_MODE::PHASED
 
 PWMmap TimerPeripheral::available_pwm  = {
-	{PB14, {timer12, {TIM_CHANNEL_1, NORMAL}}},
-	{PB15, {timer12, {TIM_CHANNEL_2, NORMAL}}},
-	{PB4, {timer3, {TIM_CHANNEL_1, PHASED}}},
-	{PB5, {timer3, {TIM_CHANNEL_2, NORMAL}}},
-	{PC8, {timer3, {TIM_CHANNEL_3, NORMAL}}},
-	{PD12, {timer4, {TIM_CHANNEL_1, NORMAL}}},
-	{PD13, {timer4, {TIM_CHANNEL_2, NORMAL}}},
-	{PD15, {timer4, {TIM_CHANNEL_4, NORMAL}}},
-	{PE14, {timer1, {TIM_CHANNEL_4, PHASED}}},
-	{PE6, {timer15, {TIM_CHANNEL_2, NORMAL}}},
-	{PF1, {timer23, {TIM_CHANNEL_2, NORMAL}}},
-	{PF2, {timer23, {TIM_CHANNEL_3, NORMAL}}},
-	{PF3, {timer23, {TIM_CHANNEL_4, NORMAL}}},
-	{PE5, {timer15, {TIM_CHANNEL_1, NORMAL}}},
-	{PE11, {timer1, {TIM_CHANNEL_2, NORMAL}}},
+	{PB9, {timer17, {TIM_CHANNEL_1, NORMAL}}},
 };
 
 DualPWMmap TimerPeripheral::available_dual_pwms = {
-	{{PB8,PB6}, {timer16, {TIM_CHANNEL_1, NORMAL}}},
-	{{PB9,PB7}, {timer17, {TIM_CHANNEL_1, PHASED}}},
-	{{PE11,PE10}, {timer1, {TIM_CHANNEL_2, PHASED}}},
-	{{PE13,PE12}, {timer1, {TIM_CHANNEL_3, PHASED}}},
-	{{PE5,PE4}, {timer15, {TIM_CHANNEL_1, NORMAL}}},
-	{{PE9,PE8}, {timer1, {TIM_CHANNEL_1, NORMAL}}},
+
 };
 
 #endif

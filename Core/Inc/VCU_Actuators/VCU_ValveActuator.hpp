@@ -8,21 +8,21 @@ namespace VCU{
     class ValveActuator{
         private:
         DigitalOutput digital_output;
-        VALVE_STATE* valve_state;
+        VALVE_STATE& valve_state;
 
         public:
-            ValveActuator(Pin& pin, VALVE_STATE* valve_state): digital_output(pin), valve_state(valve_state){
+            ValveActuator(Pin& pin, VALVE_STATE& valve_state): digital_output(pin), valve_state(valve_state){
                 digital_output.turn_off();
             }
 
             void close(){
                 digital_output.turn_off();
-                *valve_state = VALVE_STATE::CLOSED;
+                valve_state = VALVE_STATE::CLOSED;
             }
 
             void open(){
                 digital_output.turn_on();
-                *valve_state = VALVE_STATE::OPEN;
+                valve_state = VALVE_STATE::OPEN;
             }    
     };
 }

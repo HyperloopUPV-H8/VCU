@@ -11,14 +11,112 @@
 
 namespace VCU{
     template<VCU::VCU_MODE> class Brakes;
+
+    template<>
     class Brakes<VCU::VCU_MODE::BRAKE_VALIDATION>{
         constexpr static uint16_t ntc_lookup_table_size = 256;
 
-        constexpr static double high_pressure_sensor_slope = 0.006681691;
-        constexpr static double high_pressure_sensor_offset = -43.75;
+        constexpr static float high_pressure_sensor_slope = 0.006681691;
+        constexpr static float high_pressure_sensor_offset = -43.75;
 
-        constexpr static double low_pressure_sensors_slope = 0.000190905;
-        constexpr static double low_pressure_sensors_offset = -1.25;
+        constexpr static float low_pressure_sensors_slope = 0.000190905;
+        constexpr static float low_pressure_sensors_offset = -1.25;
+
+        constexpr static float operating_pressure = 8.0f;
+
+        ValveActuator valve_actuator;
+        RegulatorActuator regulator_actuator;
+        RegulatorSensor regulator_sensor;
+
+        Reed reed;
+
+        double ntc_lookup_table[ntc_lookup_table_size];
+
+        LookupSensor temperature_sensor1;
+        LookupSensor temperature_sensor2;
+
+        LinearSensor<float> high_pressure_sensor;
+        LinearSensor<float> low_pressure_sensor1;
+        LinearSensor<float> low_pressure_sensor2;
+
+    public:
+        Brakes(Data<VCU_MODE::BRAKE_VALIDATION>& data) : valve_actuator(Pinout::VALVE, data.valve_state),
+        regulator_actuator(Pinout::REGULATOR_OUT, data.regulator_reference_pressure),
+        regulator_sensor(Pinout::REGULATOR_IN, data.regulator_real_pressure),
+
+        reed(Pinout::REED1, &data.reed),
+
+        temperature_sensor1(Pinout::BOTTLE_TEMP1, ntc_lookup_table, ntc_lookup_table_size, &data.bottle_temperature1),
+        temperature_sensor2(Pinout::BOTTLE_TEMP2, ntc_lookup_table, ntc_lookup_table_size, &data.bottle_temperature2),
+
+        high_pressure_sensor(Pinout::HIGH_PRESSURE, high_pressure_sensor_slope, high_pressure_sensor_offset, &data.high_pressure1),
+        low_pressure_sensor1(Pinout::LOW_PRESSURE1, low_pressure_sensors_slope, low_pressure_sensors_offset, &data.low_pressure1),
+        low_pressure_sensor2(Pinout::LOW_PRESSURE2, low_pressure_sensors_slope, low_pressure_sensors_offset, &data.low_pressure2)
+        {
+
+        }
+
+
+        void read(){
+            regulator_sensor.read();
+
+            temperature_sensor1.read();
+            temperature_sensor2.read();
+
+            high_pressure_sensor.read();
+            low_pressure_sensor1.read();
+            low_pressure_sensor2.read();
+
+            reed.read();
+        }
+
+        void brake(){
+            valve_actuator.close();
+
+
+            Time::set_timeout(1, [&](){
+                check_reeds();
+            });
+        }
+
+        void not_brake(){
+            valve_actuator.open();
+
+            Time::set_timeout(1, [&](){
+                check_reeds();
+            });
+        }
+
+
+        void check_reeds(){
+        	reed.read();
+        }
+
+        void init(){
+        	regulator_actuator.init();
+            read();
+            brake();
+            regulator_actuator.set_pressure(operating_pressure);
+            read();
+        }
+
+        void set_regulator_pressure(float new_pressure){
+            regulator_actuator.set_pressure(new_pressure);
+        }
+
+
+    };
+
+
+    template<>
+    class Brakes<VCU::VCU_MODE::VEHICLE>{
+        constexpr static uint16_t ntc_lookup_table_size = 256;
+
+        constexpr static float high_pressure_sensor_slope = 0.006681691;
+        constexpr static float high_pressure_sensor_offset = -43.75;
+
+        constexpr static float low_pressure_sensors_slope = 0.000190905;
+        constexpr static float low_pressure_sensors_offset = -1.25;
       
 
         constexpr static float operating_pressure = 8.0f;
@@ -43,19 +141,19 @@ namespace VCU{
             LookupSensor temperature_sensor1;
             LookupSensor temperature_sensor2;
 
-            LinearSensor high_pressure_sensor;
-            LinearSensor low_pressure_sensor1;
-            LinearSensor low_pressure_sensor2;
+            LinearSensor<float> high_pressure_sensor;
+            LinearSensor<float> low_pressure_sensor1;
+            LinearSensor<float> low_pressure_sensor2;
 
         public:
             Brakes(Data<VCU::VCU_MODE::VEHICLE>& data):
                 data(data),
 
-                valve_actuator(Pinout::VALVE, &data.valve_state),
-                regulator_actuator(Pinout::REGULATOR_OUT, &data.regulator_reference_pressure),
-                regulator_sensor(Pinout::REGULATOR_IN, &data.regulator_real_pressure),
+                valve_actuator(Pinout::VALVE, data.valve_state),
+                regulator_actuator(Pinout::REGULATOR_OUT, data.regulator_reference_pressure),
+                regulator_sensor(Pinout::REGULATOR_IN, data.regulator_real_pressure),
 
-                emergency_tape(Pinout::EMERGENCY_TAPE, [&](){emergency_tape.read();}, &data.emergency_tape),
+                emergency_tape(Pinout::EMERGENCY_TAPE, [&](){emergency_tape.read();}, data.emergency_tape),
                 emergency_tape_enable(Pinout::EMERGENCY_TAPE_ENABLE),
 
                 reed1(Pinout::REED1, &data.reed1),

@@ -47,9 +47,9 @@ namespace VCU{
         constexpr Pin& OPERATIONAL_LED = PG8;
 
         //Reeds
-        constexpr Pin& REED1 = PD11;
-        constexpr Pin& REED2 = PD10;
-        constexpr Pin& REED3 = PE3;
-        constexpr Pin& REED4 = PE4;
+        constexpr Pin& REED1 = PG3;
+        constexpr Pin& REED2 = PG2;
+        constexpr Pin& REED3 = PD11;
+        constexpr Pin& REED4 = PD10;
     }
 }

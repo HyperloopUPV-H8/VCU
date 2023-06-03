@@ -4,12 +4,15 @@
 #include "ST-LIB.hpp"
 #include "Runes/Runes.hpp"
 #include "VCU.hpp"
+#include "VCU_Time/VCU_Time.hpp"
 
 int main(void)
 {
-	STLIB::start();
-
-	while(1) {
+	VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION> vcu;
+	VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION>::vcu = &vcu;
+	vcu.init();
+	VCU::CyclicActions<VCU::VCU_MODE::BRAKE_VALIDATION>::register_cyclic_actions();
+	while(1){
 		STLIB::update();
 	}
 }
