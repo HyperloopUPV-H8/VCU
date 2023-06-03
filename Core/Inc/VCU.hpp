@@ -55,6 +55,23 @@ namespace VCU{
 	void set_regulator_pressure(){
 		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.set_regulator_pressure(VCU_CLASS<BRAKE_VALIDATION>::vcu->incoming_orders.new_pressure);
 	}
+
+	void brake(){
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.brake();
+	}
+
+	void unbrake(){
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.not_brake();
+	}
+
+	void disable_emergency_tape(){
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.disable_emergency_brakes();
+	}
+
+	void enable_emergency_tape(){
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.enable_emergency_brakes();
+	}
+
 }
 
 VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION>* VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION>::vcu = nullptr;

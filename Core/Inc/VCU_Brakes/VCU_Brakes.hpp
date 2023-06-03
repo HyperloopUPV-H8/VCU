@@ -16,8 +16,8 @@ namespace VCU{
     class Brakes<VCU::VCU_MODE::BRAKE_VALIDATION>{
         constexpr static uint16_t ntc_lookup_table_size = 256;
 
-        constexpr static float high_pressure_sensor_slope = 0.006681691;
-        constexpr static float high_pressure_sensor_offset = -43.75;
+        constexpr static float high_pressure_sensor_slope = 113.46153*1.20822977;
+        constexpr static float high_pressure_sensor_offset = (-516.25/11.8)*1.20822977;
 
         constexpr static float low_pressure_sensors_slope = 0.000190905;
         constexpr static float low_pressure_sensors_offset = -1.25;
@@ -27,6 +27,8 @@ namespace VCU{
         ValveActuator valve_actuator;
         RegulatorActuator regulator_actuator;
         RegulatorSensor regulator_sensor;
+
+        DigitalOutput emergency_tape_enable;
 
         Reed reed;
 
@@ -43,6 +45,8 @@ namespace VCU{
         Brakes(Data<VCU_MODE::BRAKE_VALIDATION>& data) : valve_actuator(Pinout::VALVE, data.valve_state),
         regulator_actuator(Pinout::REGULATOR_OUT, data.regulator_reference_pressure),
         regulator_sensor(Pinout::REGULATOR_IN, data.regulator_real_pressure),
+
+        emergency_tape_enable(Pinout::EMERGENCY_TAPE_ENABLE),
 
         reed(Pinout::REED1, &data.reed),
 
@@ -72,20 +76,20 @@ namespace VCU{
 
         void brake(){
             valve_actuator.close();
-
-
-            Time::set_timeout(1, [&](){
-                check_reeds();
-            });
         }
 
         void not_brake(){
             valve_actuator.open();
-
-            Time::set_timeout(1, [&](){
-                check_reeds();
-            });
         }
+
+        void disable_emergency_brakes(){
+            emergency_tape_enable.turn_on();
+        }
+
+        void enable_emergency_brakes(){
+            emergency_tape_enable.turn_off();
+        }
+
 
 
         void check_reeds(){

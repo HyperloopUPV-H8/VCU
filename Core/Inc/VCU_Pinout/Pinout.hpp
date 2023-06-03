@@ -25,9 +25,9 @@ namespace VCU{
         constexpr Pin& VALVE = PE7;
 
         //Pressure
-        constexpr Pin& HIGH_PRESSURE = PA1;
-        constexpr Pin& LOW_PRESSURE1 = PA2;
-        constexpr Pin& LOW_PRESSURE2 = PA3;
+        constexpr Pin& HIGH_PRESSURE = PB0;
+        constexpr Pin& LOW_PRESSURE1 = PB1;
+        constexpr Pin& LOW_PRESSURE2 = PF11;
 
         //Tapes
         constexpr Pin& TAPE1 = PC6;
