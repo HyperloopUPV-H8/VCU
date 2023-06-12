@@ -1,21 +1,6 @@
 #pragma once
 
-#include <VCU_Communications/VCU_TCP/VCU_TCP.hpp>
-#include <VCU_Communications/VCU_UDP/VCU_UDP.hpp>
-#include "VCU_Pinout/Pinout.hpp"
-#include "VCU_Mode/VCU_Mode.hpp"
-#include "VCU_Data/VCU_Data.hpp"
-#include "VCU_Sensors/VCU_EnviromentalSensors.hpp"
-#include "VCU_Sensors/VCU_RegulatorSensor.hpp"
-#include "VCU_Sensors/VCU_Reed.hpp"
-#include "VCU_Actuators/VCU_LedsActuator.hpp"
-#include "VCU_Actuators/VCU_RegulatorActuator.hpp"
-#include "VCU_Actuators/VCU_ValveActuator.hpp"
-#include "VCU_Brakes/VCU_Brakes.hpp"
-#include "VCU_Utilities/VCU_Types.hpp"
-#include "VCU_Communications/VCU_TCP/IncomingOrders.hpp"
-#include "VCU_Communications/VCU_UDP/Packets.hpp"
-
+#include "VCU_Utilities/VCU_Includes.hpp"
 
 namespace VCU{
 	template<VCU_MODE> class VCU_CLASS;
@@ -32,6 +17,43 @@ namespace VCU{
 		Packets<VCU_MODE::BRAKE_VALIDATION> packets;
 
 		VCU_CLASS():data(), brakes(data), tcp_handler(), udp_handler(), incoming_orders(data), packets(data){}
+
+		void init(){
+			STLIB::start();
+			brakes.init();
+			udp_handler.init();
+			tcp_handler.init();
+		}
+
+		static void read_brakes_sensors(){
+			vcu->brakes.read();
+		}
+
+		static void send_to_backend(){
+			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.regulator_packet);
+			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.pressure_packets);
+			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.bottle_temperature_packet);
+			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.reed_packet);
+		}
+	};
+
+	template<> class VCU_CLASS<VCU_MODE::VEHICLE>{
+	public:
+		static VCU_CLASS* vcu;
+
+		Data<VCU_MODE::VEHICLE> data;
+		Brakes<VCU_MODE::VEHICLE> brakes;
+		TCP<VCU_MODE::VEHICLE> tcp_handler;
+		UDP<VCU_MODE::VEHICLE> udp_handler;
+		IncomingOrders<VCU_MODE::VEHICLE> incoming_orders;
+		Packets<VCU_MODE::VEHICLE> packets;
+		EncoderSensor encoder;
+		GeneralStateMachine<VCU_MODE::VEHICLE> state_machine_handler;
+
+		VCU_CLASS():data(), brakes(data), tcp_handler(), udp_handler(), incoming_orders(data), packets(data),
+					encoder(Pinout::TAPE1, Pinout::TAPE2, &data.tapes_position, &data.tapes_direction, &data.tapes_speed, &data.tapes_acceleration)
+					,state_machine_handler(data, brakes, tcp_handler, encoder)
+				{}
 
 		void init(){
 			STLIB::start();

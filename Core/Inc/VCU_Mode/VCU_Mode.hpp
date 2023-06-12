@@ -5,5 +5,5 @@ namespace VCU{
         BRAKE_VALIDATION,
         POSITION_VALIDATION,
         VEHICLE,
-};
+    };
 }

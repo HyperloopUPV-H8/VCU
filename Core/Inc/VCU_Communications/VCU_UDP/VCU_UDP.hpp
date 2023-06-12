@@ -19,4 +19,19 @@ namespace VCU{
         	BACKEND_CONNECTION.send(packet);
         }
     };
+
+	template<>
+	class UDP<VEHICLE> {
+	public:
+		DatagramSocket BACKEND_CONNECTION;
+		UDP() {}
+		void init(){
+			//TODO: Conectarse a todas las placas
+			BACKEND_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, BACKEND_IP, UDP_PORT);
+			BACKEND_CONNECTION.reconnect();
+		}
+		void send_to_backend(Packet& packet){
+			BACKEND_CONNECTION.send(packet);
+		}
+	};
 }

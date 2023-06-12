@@ -21,4 +21,17 @@ namespace VCU{
         }
     };
     
+
+	template<>
+	class TCP<VCU::VCU_MODE::VEHICLE>{
+	public:
+		ServerSocket BACKEND_CONNECTION;
+		TCP() {}
+		void init(){
+			BACKEND_CONNECTION = ServerSocket(VCU_IP, SERVER_PORT);
+		}
+		void send_to_master(Order& order){
+			BACKEND_CONNECTION.send_order(order);
+		}
+	};
 }
