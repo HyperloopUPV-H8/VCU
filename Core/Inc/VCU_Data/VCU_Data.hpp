@@ -35,7 +35,6 @@ namespace VCU{
 
         PinState emergeny_tape_enable = PinState::OFF;
         PinState emergency_tape = PinState::OFF;
-        float emergency_distance = 6000; // 6000mm
 
         float high_pressure1 = 0.0f;
         float low_pressure1 = 0.0f;

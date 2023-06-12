@@ -23,9 +23,22 @@ namespace VCU{
 			data(data),brakes(brakes),tcp_handler(tcp), encoder(encoder)
 		{}
 
-		void add_transitions(){}
+		void add_transitions(){
+			//TODO: Las transiciones son enteramente con state orders
 
-		void add_on_enter_actions(){}
+		}
+
+		void add_on_enter_actions(){
+			state_machine.add_enter_action([&](){
+				//TODO: set lev parameters
+				//TODO: send lev order
+			}, LevOn);
+
+			state_machine.add_enter_action([&](){
+				//TODO: send stop lev order
+			}, LevOff);
+
+		}
 
 		void add_on_exit_actions(){}
 

@@ -31,7 +31,7 @@ namespace VCU{
 			//TODO: Pushing -> Accelerating con una state orden
 
 			state_machine.add_transition(Accelerating, Braking, [&](){
-				return data.tapes_position > data.emergency_distance;
+				return data.emergency_tape == PinState::OFF;
 			});
 
 			state_machine.add_transition(Braking,  Idle, [&](){
@@ -42,6 +42,8 @@ namespace VCU{
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
 				brakes.enable_emergency_brakes();
+				brakes.brake();
+
 			}, Idle);
 
 			state_machine.add_enter_action([&](){
@@ -50,12 +52,13 @@ namespace VCU{
 			}, Pushing);
 
 			state_machine.add_enter_action([&](){
-				encoder.reset();
 				//TODO: set engine parameters
 				//TODO: send start engine order
 			}, Accelerating);
 
 			state_machine.add_enter_action([&](){
+				//Quizas hace falta darle un offset (avanzar un poco más) para evitar que entre
+				//en fault si se mueve ligeremante hacia atras y ha quedado demasido cerca de la emergency tape.
 				//TODO: send engine brake order
 			}, Braking);
 		}
