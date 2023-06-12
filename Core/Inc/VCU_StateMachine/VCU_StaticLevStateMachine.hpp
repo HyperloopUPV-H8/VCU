@@ -30,12 +30,14 @@ namespace VCU{
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
+				brakes.not_brake();
 				//TODO: set lev parameters
 				//TODO: send lev order
 			}, LevOn);
 
 			state_machine.add_enter_action([&](){
 				//TODO: send stop lev order
+				brakes.brake();
 			}, LevOff);
 
 		}
