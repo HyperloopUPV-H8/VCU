@@ -22,9 +22,16 @@ namespace VCU{
         double bottle_temperature1 = 0.0f;
         double bottle_temperature2 = 0.0f;
 
+        bool emergency_tape_detected = false;
+
         REED_STATE reed = REED_STATE::RETRACTED;
 
         VALVE_STATE valve_state;
+
+        void add_protections(){
+        	add_protection(&emergency_tape_detected, Boundary<bool, NOT_EQUALS>(true));
+        	add_protection((void*)nullptr, Boundary<void, ERROR_HANDLER>());
+        }
     };
 
     template<>

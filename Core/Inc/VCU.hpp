@@ -15,6 +15,7 @@
 #include "VCU_Utilities/VCU_Types.hpp"
 #include "VCU_Communications/VCU_TCP/IncomingOrders.hpp"
 #include "VCU_Communications/VCU_UDP/Packets.hpp"
+#include "VCU_StateMachine/VCU_StateMachine.hpp"
 
 
 namespace VCU{
@@ -25,23 +26,31 @@ namespace VCU{
 		static VCU_CLASS* vcu;
 
 		Data<VCU_MODE::BRAKE_VALIDATION> data;
-		Brakes<VCU_MODE::BRAKE_VALIDATION> brakes;
+		Actuators<VCU_MODE::BRAKE_VALIDATION> actuators;
 		TCP<VCU_MODE::BRAKE_VALIDATION> tcp_handler;
 		UDP<VCU_MODE::BRAKE_VALIDATION> udp_handler;
 		IncomingOrders<VCU_MODE::BRAKE_VALIDATION> incoming_orders;
 		Packets<VCU_MODE::BRAKE_VALIDATION> packets;
+		GeneralStateMachine<VCU_MODE::BRAKE_VALIDATION> general_state_machine;
 
-		VCU_CLASS():data(), brakes(data), tcp_handler(), udp_handler(), incoming_orders(data), packets(data){}
+		//ÑAPAS
+		PinState emergency_tape_pinstate;
+		SensorInterrupt emergency_tape_detector{Pinout::EMERGENCY_TAPE, [&](){
+			data.emergency_tape_detected = true;
+		}, emergency_tape_pinstate, ExternalInterrupt::FALLING};
+
+		VCU_CLASS():data(), actuators(data), tcp_handler(), udp_handler(), incoming_orders(data), packets(data), general_state_machine(data,actuators,tcp_handler){}
 
 		void init(){
 			STLIB::start();
-			brakes.init();
+			actuators.brakes.init();
 			udp_handler.init();
 			tcp_handler.init();
+			general_state_machine.init();
 		}
 
 		static void read_brakes_sensors(){
-			vcu->brakes.read();
+			vcu->actuators.brakes.read();
 		}
 
 		static void send_to_backend(){
@@ -50,26 +59,30 @@ namespace VCU{
 			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.bottle_temperature_packet);
 			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.reed_packet);
 		}
+
+		static void update_state_machine(){
+			vcu->general_state_machine.general_state_machine.check_transitions();
+		}
 	};
 
 	void set_regulator_pressure(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.set_regulator_pressure(VCU_CLASS<BRAKE_VALIDATION>::vcu->incoming_orders.new_pressure);
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.set_regulator_pressure(VCU_CLASS<BRAKE_VALIDATION>::vcu->incoming_orders.new_pressure);
 	}
 
 	void brake(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.brake();
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.brake();
 	}
 
 	void unbrake(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.not_brake();
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.not_brake();
 	}
 
 	void disable_emergency_tape(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.disable_emergency_brakes();
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.disable_emergency_brakes();
 	}
 
 	void enable_emergency_tape(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->brakes.enable_emergency_brakes();
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.enable_emergency_brakes();
 	}
 
 }

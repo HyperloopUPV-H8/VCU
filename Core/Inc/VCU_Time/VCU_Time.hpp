@@ -17,6 +17,7 @@ namespace VCU{
 		static void register_cyclic_actions(){
 			Time::register_low_precision_alarm(1, VCU::VCU_CLASS<BRAKE_VALIDATION>::read_brakes_sensors);
 			Time::register_low_precision_alarm(16, VCU::VCU_CLASS<BRAKE_VALIDATION>::send_to_backend);
+			Time::register_low_precision_alarm(1, VCU::VCU_CLASS<BRAKE_VALIDATION>::update_state_machine);
 		}
 	};
 }
