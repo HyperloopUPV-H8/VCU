@@ -36,7 +36,7 @@ namespace VCU{
 		//ÑAPAS
 		PinState emergency_tape_pinstate;
 		SensorInterrupt emergency_tape_detector{Pinout::EMERGENCY_TAPE, [&](){
-			data.emergency_tape_detected = true;
+			if(general_state_machine.general_state_machine.current_state == GeneralStateMachine<BRAKE_VALIDATION>::OPERATIONAL )data.emergency_tape_detected = true;
 		}, emergency_tape_pinstate, ExternalInterrupt::FALLING};
 
 		VCU_CLASS():data(), actuators(data), tcp_handler(), udp_handler(), incoming_orders(data), packets(data), general_state_machine(data,actuators,tcp_handler){}
@@ -47,6 +47,7 @@ namespace VCU{
 			udp_handler.init();
 			tcp_handler.init();
 			general_state_machine.init();
+			data.add_protections();
 		}
 
 		static void read_brakes_sensors(){

@@ -29,7 +29,7 @@ namespace VCU{
         VALVE_STATE valve_state;
 
         void add_protections(){
-        	add_protection(&emergency_tape_detected, Boundary<bool, NOT_EQUALS>(true));
+        	add_protection(&emergency_tape_detected, Boundary<bool, EQUALS>(true));
         	add_protection((void*)nullptr, Boundary<void, ERROR_HANDLER>());
         }
     };

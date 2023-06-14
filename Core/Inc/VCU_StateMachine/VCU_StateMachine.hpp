@@ -66,6 +66,7 @@ namespace VCU{
 				});
 				general_state_machine.add_enter_action([&](){
 					 actuators.led_fault.turn_on();
+					 actuators.brakes.brake();
 				}, FAULT);
 
 				general_state_machine.add_enter_action([&](){
