@@ -37,11 +37,15 @@ namespace VCU{
     template<>
     class Data<VCU::VCU_MODE::VEHICLE>{
         public:
+
+    	//BOARD Data
     	float regulator_real_pressure = 0.0f;
         float regulator_reference_pressure = 0.0f;
 
         PinState emergeny_tape_enable = PinState::OFF;
         PinState emergency_tape = PinState::OFF;
+
+        bool emergency_tape_detected = false;
 
         float high_pressure1 = 0.0f;
         float low_pressure1 = 0.0f;
@@ -64,5 +68,15 @@ namespace VCU{
         double tapes_direction = 0.0f;
         double tapes_speed = 0.0f;
         double tapes_acceleration = 0.0f;
+
+        //Vehicle data
+
+        LevitaionState levitation_state = IDLE;
+
+        void add_protections(){
+        	add_protection(&high_pressure1, Boundary<float, ABOVE>(300));
+        	add_protection(&reeds_ok, Boundary<bool, NOT_EQUALS>(true));
+        	add_protection(&emergency_tape_detected, Boundary<bool, EQUALS>(true));
+        }
     };
 }

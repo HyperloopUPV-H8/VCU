@@ -33,7 +33,6 @@ namespace VCU{
 		Packets<VCU_MODE::BRAKE_VALIDATION> packets;
 		GeneralStateMachine<VCU_MODE::BRAKE_VALIDATION> general_state_machine;
 
-		//ÑAPAS
 		PinState emergency_tape_pinstate;
 		SensorInterrupt emergency_tape_detector{Pinout::EMERGENCY_TAPE, [&](){
 			if(general_state_machine.general_state_machine.current_state == GeneralStateMachine<BRAKE_VALIDATION>::OPERATIONAL )data.emergency_tape_detected = true;
@@ -66,25 +65,74 @@ namespace VCU{
 		}
 	};
 
-	void set_regulator_pressure(){
+	void set_regulator_pressure_brakes_validation(){
 		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.set_regulator_pressure(VCU_CLASS<BRAKE_VALIDATION>::vcu->incoming_orders.new_pressure);
 	}
 
-	void brake(){
+	void brake_brakes_validation(){
 		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.brake();
 	}
 
-	void unbrake(){
+	void unbrake_brakes_validation(){
 		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.not_brake();
 	}
 
-	void disable_emergency_tape(){
+	void disable_emergency_tape_brakes_validation(){
 		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.disable_emergency_brakes();
 	}
 
-	void enable_emergency_tape(){
+	void enable_emergency_tape_brakes_validation(){
 		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.enable_emergency_brakes();
 	}
+
+
+	template<>
+	class VCU_CLASS<VEHICLE>{
+	public:
+			static VCU_CLASS* vcu;
+
+			Data<VCU_MODE::VEHICLE> data;
+			Actuators<VCU_MODE::VEHICLE> actuators;
+			TCP<VCU_MODE::VEHICLE> tcp_handler;
+			UDP<VCU_MODE::VEHICLE> udp_handler;
+			IncomingOrders<VCU_MODE::VEHICLE> incoming_orders;
+			Packets<VCU_MODE::VEHICLE> packets;
+//			GeneralStateMachine<VCU_MODE::VEHICLE> general_state_machine;
+
+			EncoderSensor tapes_encoder;
+
+			PinState emergency_tape_pinstate;
+			SensorInterrupt emergency_tape_detector{Pinout::EMERGENCY_TAPE, [&](){
+//				if(general_state_machine.general_state_machine.current_state == GeneralStateMachine<BRAKE_VALIDATION>::OPERATIONAL )data.emergency_tape_detected = true;
+			}, emergency_tape_pinstate, ExternalInterrupt::FALLING};
+
+//			VCU_CLASS():data(), actuators(data), tcp_handler(), udp_handler(), incoming_orders(data), packets(data), general_state_machine(data,actuators,tcp_handler),
+//					tapes_encoder(Pinout::TAPE1, Pinout::TAPE2, &data.tapes_position, &data.tapes_direction, &data.tapes_speed, &data.tapes_acceleration){}
+
+			void init(){
+				STLIB::start();
+				actuators.brakes.init();
+				udp_handler.init();
+//				tcp_handler.init();
+//				general_state_machine.init();
+				data.add_protections();
+			}
+
+			static void read_brakes_sensors(){
+				vcu->actuators.brakes.read();
+			}
+
+//			static void send_to_backend(){
+//				vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.regulator_packet);
+//				vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.pressure_packets);
+//				vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.bottle_temperature_packet);
+//				vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.reed_packet);
+//			}
+
+			static void update_state_machine(){
+//				vcu->general_state_machine.general_state_machine.check_transitions();
+			}
+	};
 
 }
 

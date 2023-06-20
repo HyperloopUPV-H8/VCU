@@ -416,7 +416,7 @@
  * (requires the LWIP_RAW option)
  */
 #if !defined MEMP_NUM_RAW_PCB || defined __DOXYGEN__
-#define MEMP_NUM_RAW_PCB                4
+#define MEMP_NUM_RAW_PCB                5
 #endif
 
 /**

@@ -116,12 +116,11 @@ namespace VCU{
     class Brakes<VCU::VCU_MODE::VEHICLE>{
         constexpr static uint16_t ntc_lookup_table_size = 256;
 
-        constexpr static float high_pressure_sensor_slope = 0.006681691;
-        constexpr static float high_pressure_sensor_offset = -43.75;
+        constexpr static float high_pressure_sensor_slope = 113.46153*1.20822977;
+        constexpr static float high_pressure_sensor_offset = (-516.25/11.8)*1.20822977;
 
         constexpr static float low_pressure_sensors_slope = 0.000190905;
         constexpr static float low_pressure_sensors_offset = -1.25;
-      
 
         constexpr static float operating_pressure = 8.0f;
 
