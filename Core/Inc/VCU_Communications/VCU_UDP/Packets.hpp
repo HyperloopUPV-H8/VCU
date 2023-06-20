@@ -17,4 +17,9 @@ namespace VCU{
 				pressure_packets(214, &data.high_pressure1, &data.low_pressure1, &data.low_pressure2)
 		{}
 	};
+
+	template<>
+	class Packets<VCU_MODE::VEHICLE>{
+	public:
+	};
 }
