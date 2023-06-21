@@ -120,7 +120,7 @@ namespace VCU{
 		void add_transitions(){
 			//todo: COMPROBAR que estan todos conectados antes de pasar a operational
 			general_state_machine.add_transition(INITIAL, OPERATIONAL, [&](){
-				return tcp_handler.BACKEND_CONNECTION.state == ServerSocket::ServerState::ACCEPTED ;
+				return tcp_handler.check_connections();
 			});
 			general_state_machine.add_transition(INITIAL, FAULT, [&](){
 				if(tcp_timeout){
@@ -129,7 +129,7 @@ namespace VCU{
 				return tcp_timeout;
 			});
 			general_state_machine.add_transition(OPERATIONAL, FAULT, [&](){
-				if(tcp_handler.BACKEND_CONNECTION.state != ServerSocket::ServerState::ACCEPTED){
+				if(not tcp_handler.check_connections() ){
 					ErrorHandler("TCP connections fell");
 					return true;
 				}
@@ -138,16 +138,16 @@ namespace VCU{
 		}
 
 		void add_on_enter_actions(){
-			general_state_machine.add_enter_action([&](){
-				Time::set_timeout(max_tcp_connection_timeout, [&](){
-					if(not (tcp_handler.BACKEND_CONNECTION.state == ServerSocket::ServerState::ACCEPTED)){
-								tcp_timeout = true;
-					}
-				});
-			}, INITIAL);
-
+//			general_state_machine.add_enter_action([&](){
+//				Time::set_timeout(max_tcp_connection_timeout, [&](){
+//					if(not (tcp_handler.BACKEND_CONNECTION.state == ServerSocket::ServerState::ACCEPTED)){
+//								tcp_timeout = true;
+//					}
+//				});
+//			}, INITIAL);
+			//Replicado porque el estado incial no ejecuta las enter actions
 			Time::set_timeout(max_tcp_connection_timeout, [&](){
-				if(not (tcp_handler.BACKEND_CONNECTION.state == ServerSocket::ServerState::ACCEPTED)){
+				if(not (tcp_handler.check_connections())){
 							tcp_timeout = true;
 				}
 			});

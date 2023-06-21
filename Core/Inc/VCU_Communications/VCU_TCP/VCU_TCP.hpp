@@ -77,5 +77,19 @@ namespace VCU{
         void send_to_pcu(Order& order){
         	PCU_CONNECTION.send_order(order);
         }
+
+        bool check_connections(){
+        	return
+        	BACKEND_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			&&
+			OBCCU_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			&&
+			BMSL_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			&&
+			LCU_MASTER_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			&&
+			PCU_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			;
+        }
 	};
 }
