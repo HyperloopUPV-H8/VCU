@@ -9,10 +9,18 @@ namespace VCU{
 	class LoadStateMachine<VEHICLE>{
 	public:
 		Data<VEHICLE>& data;
-		Brakes<VEHICLE>& brakes;
+		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
 		EncoderSensor& encoder;
 		StateMachine state_machine;
+
+		StackStateOrder<0> start_pushing;
+		StackStateOrder<0> start_crawling;
+
+		bool ended = false;
+
+		static bool pushing_requested;
+		static bool crawling_requested;
 
 		enum UnloadStates{
 			Idle,
@@ -21,14 +29,37 @@ namespace VCU{
 			Braking,
 		};
 
-		LoadStateMachine(Data<VEHICLE>& data, Brakes<VEHICLE>&brakes, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-			data(data),brakes(brakes),tcp_handler(tcp), encoder(encoder)
+		LoadStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
+			data(data), actuators(actuators), tcp_handler(tcp), encoder(encoder),
+			start_pushing(230, enter_pushing, state_machine, Idle),
+			start_crawling(231, enter_crawling, state_machine, Pushing)
 		{}
 
-		void add_transitions(){
-			//TODO: IDLE -> Pushing con una state orden
+		static void enter_pushing(){
+			pushing_requested = true;
+		}
 
-			//TODO: Pushing -> Accelerating con una state orden
+		static void enter_crawling(){
+			crawling_requested = true;
+		}
+
+		void add_transitions(){
+			state_machine.add_transition(Idle, Pushing, [&](){
+				if(pushing_requested && not ended){
+					pushing_requested = false;
+					return true;
+				}
+				return false;
+			});
+
+			state_machine.add_transition(Pushing, Accelerating, [&](){
+				//Solo se puede emepezar el crawling si se esta en zona de emergencia
+				if(crawling_requested && data.emergency_tape == PinState::ON){
+					crawling_requested = false;
+					return true;
+				}
+				return false;
+			});
 
 			state_machine.add_transition(Accelerating, Braking, [&](){
 				return data.emergency_tape == PinState::OFF;
@@ -41,14 +72,13 @@ namespace VCU{
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
-				brakes.enable_emergency_brakes();
-				brakes.brake();
-
+				actuators.brakes.enable_emergency_brakes();
+				actuators.brakes.brake();
 			}, Idle);
 
 			state_machine.add_enter_action([&](){
-				brakes.disable_emergency_brakes();
-				brakes.not_brake();
+				actuators.brakes.disable_emergency_brakes();
+				actuators.brakes.not_brake();
 			}, Pushing);
 
 			state_machine.add_enter_action([&](){
@@ -68,7 +98,9 @@ namespace VCU{
 				if(data.emergency_tape == PinState::ON){
 					ErrorHandler("The vehicle is still in emergency zone after Health&Load procedure");
 				}else{
-					brakes.brake(); //Siguiendo el FDD kenos debe quedar frenado con pneumatica hasta empezar una demostración
+					ended = true;
+					actuators.brakes.brake();
+					 //Siguiendo el FDD kenos debe quedar frenado con pneumatica hasta empezar una demostración
 				}
 			}, Braking);
 
@@ -76,7 +108,7 @@ namespace VCU{
 
 		void register_timed_actions(){
 			state_machine.add_low_precision_cyclic_action([&](){
-				if(data.tapes_direction < 1){ //!TODO: MUY IMPORTANTE comprobar que 1 es hacia adelante!!!!!!!!!
+				if(data.tapes_direction != FORWARD){
 					ErrorHandler("The vehicle is moving backwards when it should be moving forward during load procedure");
 				}
 			}, (ms)1, Accelerating);
@@ -97,4 +129,7 @@ namespace VCU{
 		}
 
 	};
+
+	bool LoadStateMachine<VEHICLE>::crawling_requested = false;
+	bool LoadStateMachine<VEHICLE>::pushing_requested = false;
 }

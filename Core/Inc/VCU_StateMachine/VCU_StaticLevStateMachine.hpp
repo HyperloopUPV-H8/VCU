@@ -9,18 +9,20 @@ namespace VCU{
 	class StaticLevStateMachine<VEHICLE>{
 	public:
 		Data<VEHICLE>& data;
-		Brakes<VEHICLE>& brakes;
+		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
 		EncoderSensor& encoder;
 		StateMachine state_machine;
+
+		bool ended = false;
 
 		enum DynamicLevStates{
 			LevOff,
 			LevOn,
 		};
 
-		StaticLevStateMachine(Data<VEHICLE>& data, Brakes<VEHICLE>&brakes, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-			data(data),brakes(brakes),tcp_handler(tcp), encoder(encoder)
+		StaticLevStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
+			data(data), actuators(actuators), tcp_handler(tcp), encoder(encoder)
 		{}
 
 		void add_transitions(){
@@ -30,14 +32,15 @@ namespace VCU{
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
-				brakes.not_brake();
+				actuators.brakes.not_brake();
+
 				//TODO: set lev parameters
 				//TODO: send lev order
 			}, LevOn);
 
 			state_machine.add_enter_action([&](){
 				//TODO: send stop lev order
-				brakes.brake();
+				actuators.brakes.brake();
 			}, LevOff);
 
 		}

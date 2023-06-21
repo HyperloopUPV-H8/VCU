@@ -10,11 +10,10 @@
 #include "VCU_Sensors/VCU_EnviromentalSensors.hpp"
 #include "VCU_Sensors/VCU_RegulatorSensor.hpp"
 #include "VCU_Sensors/VCU_Reed.hpp"
-#include "VCU_Actuators/VCU_LedsActuator.hpp"
-#include "VCU_Actuators/VCU_RegulatorActuator.hpp"
-#include "VCU_Actuators/VCU_ValveActuator.hpp"
+#include "VCU_Actuators/VCU_Actuators.hpp"
 #include "VCU_Brakes/VCU_Brakes.hpp"
 
+#include "VCU_Communications/VCU_Communications.hpp"
 #include "VCU_Communications/VCU_TCP/VCU_TCP.hpp"
 #include "VCU_Communications/VCU_UDP/VCU_UDP.hpp"
 #include "VCU_Communications/VCU_TCP/OutgoingOrders.hpp"

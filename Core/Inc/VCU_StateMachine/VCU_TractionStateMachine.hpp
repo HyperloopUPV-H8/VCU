@@ -9,10 +9,12 @@ namespace VCU{
 	class TractionLevStateMachine<VEHICLE>{
 	public:
 		Data<VEHICLE>& data;
-		Brakes<VEHICLE>& brakes;
+		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
 		EncoderSensor& encoder;
 		StateMachine state_machine;
+
+		bool ended = false;
 
 		enum DynamicLevStates{
 			Idle,
@@ -20,15 +22,17 @@ namespace VCU{
 			Brake,
 		};
 
-		TractionLevStateMachine(Data<VEHICLE>& data, Brakes<VEHICLE>&brakes, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-			data(data),brakes(brakes),tcp_handler(tcp), encoder(encoder)
+		TractionLevStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>&actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
+			data(data),actuators(actuators),tcp_handler(tcp), encoder(encoder)
 		{}
 
 		void add_transitions(){}
 
 		void add_on_enter_actions(){}
 
-		void add_on_exit_actions(){}
+		void add_on_exit_actions(){
+
+		}
 
 		void register_timed_actions(){}
 

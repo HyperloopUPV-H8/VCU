@@ -9,16 +9,31 @@ namespace VCU{
 	class SpecificStateMachine<VEHICLE>{
 	public:
 		Data<VEHICLE>& data;
-		Brakes<VEHICLE>& brakes;
+		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
 		EncoderSensor& encoder;
+
 		LoadStateMachine<VEHICLE> health_load_state_machine;
 		UnloadStateMachine<VEHICLE> health_unload_state_machine;
 		TractionLevStateMachine<VEHICLE> traction_state_machine;
 		StaticLevStateMachine<VEHICLE> static_lev_state_machine;
 		DynamicLevStateMachine<VEHICLE> dynamic_lev_state_machine;
+
+		StackStateOrder<0> healthcheck_and_load;
+		StackStateOrder<0> healthcheck_and_unload;
+		StackStateOrder<0> start_static_lev;
+		StackStateOrder<0, vector<uint32_t>> start_dynamic_lev;
+		StackStateOrder<0, vector<uint32_t>> start_traction;
+
 		StateMachine state_machine;
-		//TODO: Añadir todas las statemachines
+
+		vector<uint32_t> traction_points;
+
+		static bool healthcheck_and_load_requested;
+		static bool healthcheck_and_unload_requested;
+		static bool start_static_lev_requested;
+		static bool start_dynamic_lev_requested;
+		static bool start_traction_requested;
 
 		enum SpecificStates{
 			Idle,
@@ -29,18 +44,97 @@ namespace VCU{
 			Traction,
 		};
 
-		SpecificStateMachine(Data<VEHICLE>& data, Brakes<VEHICLE>&brakes, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-							data(data),brakes(brakes),tcp_handler(tcp), encoder(encoder),
-							health_load_state_machine(data, brakes, tcp, encoder),
-							health_unload_state_machine(data, brakes, tcp, encoder),
-							traction_state_machine(data, brakes, tcp, encoder),
-							static_lev_state_machine(data, brakes, tcp, encoder),
-							dynamic_lev_state_machine(data, brakes, tcp, encoder)
+		SpecificStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
+					data(data),actuators(actuators),tcp_handler(tcp), encoder(encoder),
+					health_load_state_machine(data, actuators, tcp, encoder),
+					health_unload_state_machine(data, actuators, tcp, encoder),
+					traction_state_machine(data, actuators, tcp, encoder),
+					static_lev_state_machine(data, actuators, tcp, encoder),
+					dynamic_lev_state_machine(data, actuators, tcp, encoder),
+					healthcheck_and_load(220, enter_health_and_load, state_machine, Idle),
+					healthcheck_and_unload(221, enter_health_and_unload, state_machine, Idle),
+					start_static_lev(222, enter_static_lev, state_machine, Idle),
+					start_dynamic_lev(223, enter_dynamic_lev, state_machine, Idle, &traction_points),
+					start_traction(224, enter_traction, state_machine, Idle, &traction_points)
 		{}
 
-		void add_transitions(){}
+		static void enter_health_and_load(){
+			healthcheck_and_load_requested = true;
+		}
 
-		void add_on_enter_actions(){}
+		static void enter_health_and_unload(){
+			healthcheck_and_unload_requested = true;
+		}
+
+		static void enter_dynamic_lev(){
+			start_static_lev_requested = true;
+		}
+
+		static void enter_static_lev(){
+			start_dynamic_lev_requested = true;
+		}
+
+		static void enter_traction(){
+			start_traction_requested = true;
+		}
+
+		void add_transitions(){
+			state_machine.add_transition(Idle, Load, [&](){
+				return healthcheck_and_load_requested;
+			});
+
+			state_machine.add_transition(Idle, Unload, [&](){
+				return healthcheck_and_unload_requested;
+			});
+
+			state_machine.add_transition(Idle, DynamicLev, [&](){
+				return start_static_lev_requested;
+			});
+
+			state_machine.add_transition(Idle, StaticLev, [&](){
+				return start_dynamic_lev_requested;
+			});
+
+			state_machine.add_transition(Idle, Traction, [&](){
+				return start_traction_requested;
+			});
+
+			state_machine.add_transition(Load, Idle, [&](){
+				return health_load_state_machine.ended;
+			});
+
+			state_machine.add_transition(Unload, Idle, [&](){
+				return health_unload_state_machine.ended;
+			});
+
+			state_machine.add_transition(DynamicLev, Idle, [&](){
+				return dynamic_lev_state_machine.ended;
+			});
+
+			state_machine.add_transition(StaticLev, Idle, [&](){
+				return static_lev_state_machine.ended;
+			});
+
+			state_machine.add_transition(Traction, Idle, [&](){
+				return traction_state_machine.ended;
+			});
+		}
+
+		void add_on_enter_actions(){
+			state_machine.add_enter_action([&](){
+				health_load_state_machine.ended = false;
+				health_unload_state_machine.ended = false;
+				dynamic_lev_state_machine.ended = false;
+				static_lev_state_machine.ended = false;
+				traction_state_machine.ended = false;
+
+				healthcheck_and_load_requested = false;
+				healthcheck_and_unload_requested = false;
+				start_static_lev_requested = false;
+				start_dynamic_lev_requested = false;
+				start_traction_requested = false;
+			}, Idle);
+		}
 
 		void add_on_exit_actions(){}
 
@@ -54,15 +148,23 @@ namespace VCU{
 			state_machine.add_state(StaticLev);
 			state_machine.add_state(Traction);
 
+			state_machine.add_state_machine(health_unload_state_machine.state_machine, Unload);
+			state_machine.add_state_machine(health_load_state_machine.state_machine, Load);
+			state_machine.add_state_machine(traction_state_machine.state_machine, Traction);
+			state_machine.add_state_machine(static_lev_state_machine.state_machine, StaticLev);
+			state_machine.add_state_machine(dynamic_lev_state_machine.state_machine, DynamicLev);
+
 			add_on_enter_actions();
 			add_on_exit_actions();
 			add_transitions();
 			register_timed_actions();
 			add_transitions();
-
-			//TODO: Añadir todas las state machines
-			//state_machine.add_state_machine(.state_machine, OPERATIONAL);
 		}
-
 	};
+
+	bool VCU::SpecificStateMachine<VEHICLE>::healthcheck_and_load_requested = false;
+	bool VCU::SpecificStateMachine<VEHICLE>::healthcheck_and_unload_requested = false;
+	bool VCU::SpecificStateMachine<VEHICLE>::start_static_lev_requested = false;
+	bool VCU::SpecificStateMachine<VEHICLE>::start_dynamic_lev_requested = false;
+	bool VCU::SpecificStateMachine<VEHICLE>::start_traction_requested = false;
 }

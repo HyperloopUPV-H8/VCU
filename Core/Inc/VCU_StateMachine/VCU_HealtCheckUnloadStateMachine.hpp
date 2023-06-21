@@ -12,10 +12,16 @@ namespace VCU{
 
 	public:
 		Data<VEHICLE>& data;
-		Brakes<VEHICLE>& brakes;
+		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
 		EncoderSensor& encoder;
 		StateMachine state_machine;
+
+		StackStateOrder<0> return_order;
+
+		bool ended = false;
+
+		static bool return_requested;
 
 		enum LoadStates{
 			Idle,
@@ -25,14 +31,26 @@ namespace VCU{
 
 		};
 
-		UnloadStateMachine(Data<VEHICLE>& data, Brakes<VEHICLE>&brakes, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-			data(data),brakes(brakes),tcp_handler(tcp), encoder(encoder)
+		UnloadStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
+			data(data), actuators(actuators), tcp_handler(tcp), encoder(encoder),
+			return_order(232, enter_returning, state_machine, Idle)
 		{}
 
+		static void enter_returning(){
+			return_requested = true;
+		}
+
 		void add_transitions(){
-			//TODO: IDLE -> Returning con una state orden
 			//Quitar los frenos debe hacerse manualmente con una orden una vez finalizado el procedure
 			//porque segun el fdd el pod debe estar frenado hasta el momento que se va a sacar
+
+			state_machine.add_transition(Idle, Returning, [&](){
+				if(return_requested && not ended){
+					return_requested = false;
+					return true;
+				}
+				return false;
+			});
 
 			state_machine.add_transition(Returning, Crawling, [&](){
 				return data.emergency_tape == PinState::ON; //Si hemos llegado a la zona de emergencia pasamos a fase crawling
@@ -43,19 +61,19 @@ namespace VCU{
 			});
 
 			state_machine.add_transition(Braking,  Idle, [&](){
-				return data.tapes_acceleration == 0; //TODO: Muy importante hacer esto con la IMU
+				return data.tapes_acceleration == 0; //TODO: Muy importante hacer esto con la IMU del motor
 			});
 		}
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
-				brakes.enable_emergency_brakes();
-				brakes.brake();
+				actuators.brakes.enable_emergency_brakes();
+				actuators.brakes.brake();
 			}, Idle);
 
 			state_machine.add_enter_action([&](){
-				brakes.not_brake();
-				brakes.disable_emergency_brakes();
+				actuators.brakes.not_brake();
+				actuators.brakes.disable_emergency_brakes();
 				//TODO: set engine parameters
 				//TODO: send start engine order
 			}, Returning);
@@ -67,12 +85,23 @@ namespace VCU{
 
 			state_machine.add_enter_action([&](){
 				//TODO: send engine stop order
-				brakes.brake();
 			}, Braking);
 
 		}
 
-		void add_on_exit_actions(){}
+		void add_on_exit_actions(){
+
+
+			state_machine.add_exit_action([&](){
+				if(data.emergency_tape == PinState::ON){
+					ErrorHandler("The vehicle is still in emergency zone after Health&Unload procedure");
+				}else{
+					ended = true;
+					actuators.brakes.brake();
+				}
+			}, Braking);
+
+		}
 
 		void register_timed_actions(){
 			state_machine.add_low_precision_cyclic_action([&](){
@@ -82,13 +111,13 @@ namespace VCU{
 			}, (ms)1, Crawling);
 
 			state_machine.add_low_precision_cyclic_action([&](){
-				if(data.tapes_direction > 0){ //!TODO: MUY IMPORTANTE comprobar que01 es hacia atras!!!!!!!!!
+				if(data.tapes_direction != BACKWARD){
 					ErrorHandler("The vehicle is moving forward when it should be moving backwards during Health&Unload procedure");
 				}
 			}, (ms)1, Returning);
 
 			state_machine.add_low_precision_cyclic_action([&](){
-				if(data.tapes_direction > 0){ //!TODO: MUY IMPORTANTE comprobar que01 es hacia atras!!!!!!!!!
+				if(data.tapes_direction != BACKWARD){
 					ErrorHandler("The vehicle is moving forward when it should be moving backwards during Health&Unload procedure");
 				}
 			}, (ms)1, Crawling);
@@ -107,6 +136,7 @@ namespace VCU{
 			add_transitions();
 
 		}
-
 	};
+
+	bool UnloadStateMachine<VEHICLE>::return_requested = false;
 }
