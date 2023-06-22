@@ -16,7 +16,7 @@ namespace VCU{
 
 		LoadStateMachine<VEHICLE> health_load_state_machine;
 		UnloadStateMachine<VEHICLE> health_unload_state_machine;
-		TractionLevStateMachine<VEHICLE> traction_state_machine;
+		TractionStateMachine<VEHICLE> traction_state_machine;
 		StaticLevStateMachine<VEHICLE> static_lev_state_machine;
 		DynamicLevStateMachine<VEHICLE> dynamic_lev_state_machine;
 
@@ -27,8 +27,6 @@ namespace VCU{
 		StackStateOrder<0, vector<uint32_t>> start_traction;
 
 		StateMachine state_machine;
-
-		vector<uint32_t> traction_points;
 
 		static bool healthcheck_and_load_requested;
 		static bool healthcheck_and_unload_requested;
@@ -58,8 +56,8 @@ namespace VCU{
 					healthcheck_and_load((uint16_t)IncomingOrdersIDs::heakthcheck_and_load, enter_health_and_load, state_machine, Idle),
 					healthcheck_and_unload((uint16_t)IncomingOrdersIDs::healthcheck_and_unload, enter_health_and_unload, state_machine, Idle),
 					start_static_lev((uint16_t)IncomingOrdersIDs::start_static_lev_demostration, enter_static_lev, state_machine, Idle),
-					start_dynamic_lev((uint16_t)IncomingOrdersIDs::start_dynamic_lev_demostration, enter_dynamic_lev, state_machine, Idle, &traction_points),
-					start_traction((uint16_t)IncomingOrdersIDs::start_traction_demostration, enter_traction, state_machine, Idle, &traction_points)
+					start_dynamic_lev((uint16_t)IncomingOrdersIDs::start_dynamic_lev_demostration, enter_dynamic_lev, state_machine, Idle, &data.traction_points),
+					start_traction((uint16_t)IncomingOrdersIDs::start_traction_demostration, enter_traction, state_machine, Idle, &data.traction_points)
 		{}
 
 		static void enter_health_and_load(){

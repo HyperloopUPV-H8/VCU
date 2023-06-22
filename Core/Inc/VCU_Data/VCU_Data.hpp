@@ -71,6 +71,16 @@ namespace VCU{
 
         ContactorState contactors_state = ContactorState::Open;
 
+        float engine_speed;
+
+        //Demostrations
+        float target_speed;
+        vector<uint32_t> traction_points;
+
+        uint32_t brake_distance_lookup_table[35] = {
+        		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        };
+
 		void add_protections(){
 			add_protection(&high_pressure1, Boundary<float, ABOVE>(300));
 			add_protection(&reeds_ok, Boundary<bool, NOT_EQUALS>(true));

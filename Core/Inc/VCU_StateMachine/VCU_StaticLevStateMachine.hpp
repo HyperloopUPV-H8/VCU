@@ -77,6 +77,7 @@ namespace VCU{
 		}
 
 		void add_on_enter_actions(){
+
 			state_machine.add_enter_action([&](){
 				actuators.brakes.not_brake();
 				tcp_handler.send_to_lcu(outgoing_orders.take_off_order);
