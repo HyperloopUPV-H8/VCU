@@ -69,6 +69,8 @@ namespace VCU{
         //VEHICLE Data
         LevitaionState levitation_state = IDLE;
 
+        ContactorState contactors_state = ContactorState::Open;
+
 		void add_protections(){
 			add_protection(&high_pressure1, Boundary<float, ABOVE>(300));
 			add_protection(&reeds_ok, Boundary<bool, NOT_EQUALS>(true));

@@ -17,5 +17,19 @@ namespace VCU{
 		FORWARD = 1,
     };
 
+    enum ContactorState{
+    	Open,
+		Close,
+    };
+
+    enum LevitaionState{
+   		IDLE,
+   		TAKING_OFF,
+   		STABLE,
+   		STICK_UP,
+   		STICK_DOWN,
+   		LANDING,
+   	};
+
 }
 

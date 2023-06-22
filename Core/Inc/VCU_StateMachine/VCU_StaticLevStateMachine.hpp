@@ -11,47 +11,97 @@ namespace VCU{
 		Data<VEHICLE>& data;
 		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
+		OutgoingOrders<VEHICLE>& outgoing_orders;
 		EncoderSensor& encoder;
+
+		CloseContactorsStateMachine<VEHICLE> close_contactors_state_machine;
+		OpenContactorsStateMachine<VEHICLE> open_contactors_state_machine;
+
 		StateMachine state_machine;
+
+		StackStateOrder<0> take_off;
+		StackStateOrder<0> landing;
 
 		bool ended = false;
 
+		static bool start_levitation_requested;
+		static bool stop_levitation_requested;
+
 		enum DynamicLevStates{
+			CloseContactors,
 			LevOff,
 			LevOn,
+			OpenContactors,
 		};
 
-		StaticLevStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-			data(data), actuators(actuators), tcp_handler(tcp), encoder(encoder)
+		StaticLevStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
+			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder),
+			close_contactors_state_machine(data, tcp_handler, outgoing_orders),
+			open_contactors_state_machine(data, tcp_handler, outgoing_orders),
+			take_off((uint16_t)IncomingOrdersIDs::take_off, start_levitation, state_machine, LevOff),
+			landing((uint16_t)IncomingOrdersIDs::landing, stop_levitation, state_machine, LevOn)
 		{}
 
-		void add_transitions(){
-			//TODO: Las transiciones son enteramente con state orders
+		static void start_levitation(){
+			start_levitation_requested = true;
+		}
 
+		static void stop_levitation(){
+			stop_levitation_requested = true;
+		}
+
+		void add_transitions(){
+			state_machine.add_transition(CloseContactors, LevOff, [&](){
+				return close_contactors_state_machine.ended;
+			});
+
+			state_machine.add_transition(LevOff, LevOn, [&](){
+				if(start_levitation_requested && not ended){
+					start_levitation_requested = false;
+					return true;
+				}
+				return false;
+			});
+
+			state_machine.add_transition(LevOn, OpenContactors, [&](){
+				if(stop_levitation_requested){
+					stop_levitation_requested = false;
+					return true;
+				}
+				return false;
+			});
+
+			state_machine.add_transition(OpenContactors, LevOff, [&](){
+				return open_contactors_state_machine.ended;
+			});
 		}
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
 				actuators.brakes.not_brake();
-
-				//TODO: set lev parameters
-				//TODO: send lev order
+				tcp_handler.send_to_lcu(outgoing_orders.take_off_order);
 			}, LevOn);
 
 			state_machine.add_enter_action([&](){
-				//TODO: send stop lev order
+				tcp_handler.send_to_lcu(outgoing_orders.landing_order);
 				actuators.brakes.brake();
 			}, LevOff);
 
 		}
 
-		void add_on_exit_actions(){}
+		void add_on_exit_actions(){
+			state_machine.add_exit_action([&](){
+				ended = true;
+			}, OpenContactors);
+		}
 
 		void register_timed_actions(){}
 
 		void init(){
-			state_machine = {LevOff};
+			state_machine = {CloseContactors};
+			state_machine.add_state(LevOff);
 			state_machine.add_state(LevOn);
+			state_machine.add_state(OpenContactors);
 
 			add_on_enter_actions();
 			add_on_exit_actions();
@@ -61,4 +111,7 @@ namespace VCU{
 		}
 
 	};
+
+	bool StaticLevStateMachine<VEHICLE>::start_levitation_requested = false;
+	bool StaticLevStateMachine<VEHICLE>::stop_levitation_requested = false;
 }

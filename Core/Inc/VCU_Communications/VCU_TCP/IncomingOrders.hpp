@@ -12,6 +12,19 @@
 
 namespace VCU{
 
+	enum class IncomingOrdersIDs: uint16_t{
+		heakthcheck_and_load = 220,
+		healthcheck_and_unload = 221,
+		start_static_lev_demostration = 222,
+		start_dynamic_lev_demostration = 223,
+		start_traction_demostration = 224,
+		stop_demostration = 225,
+		take_off = 226,
+		landing = 227,
+		start_crawling = 231,
+	};
+
+
 	void hardware_reset(){
 		HAL_NVIC_SystemReset();
 	}

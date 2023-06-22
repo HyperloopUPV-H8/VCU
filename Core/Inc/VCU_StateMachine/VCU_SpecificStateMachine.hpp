@@ -11,6 +11,7 @@ namespace VCU{
 		Data<VEHICLE>& data;
 		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
+		OutgoingOrders<VEHICLE>& outgoing_orders;
 		EncoderSensor& encoder;
 
 		LoadStateMachine<VEHICLE> health_load_state_machine;
@@ -42,20 +43,23 @@ namespace VCU{
 			DynamicLev,
 			StaticLev,
 			Traction,
+
 		};
 
-		SpecificStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-					data(data),actuators(actuators),tcp_handler(tcp), encoder(encoder),
-					health_load_state_machine(data, actuators, tcp, encoder),
-					health_unload_state_machine(data, actuators, tcp, encoder),
-					traction_state_machine(data, actuators, tcp, encoder),
-					static_lev_state_machine(data, actuators, tcp, encoder),
-					dynamic_lev_state_machine(data, actuators, tcp, encoder),
-					healthcheck_and_load(220, enter_health_and_load, state_machine, Idle),
-					healthcheck_and_unload(221, enter_health_and_unload, state_machine, Idle),
-					start_static_lev(222, enter_static_lev, state_machine, Idle),
-					start_dynamic_lev(223, enter_dynamic_lev, state_machine, Idle, &traction_points),
-					start_traction(224, enter_traction, state_machine, Idle, &traction_points)
+		SpecificStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
+					data(data),actuators(actuators),tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder),
+
+					health_load_state_machine(data, actuators, tcp, outgoing_orders, encoder),
+					health_unload_state_machine(data, actuators, tcp, outgoing_orders, encoder),
+					traction_state_machine(data, actuators, tcp, outgoing_orders, encoder),
+					static_lev_state_machine(data, actuators, tcp, outgoing_orders, encoder),
+					dynamic_lev_state_machine(data, actuators, tcp, outgoing_orders, encoder),
+
+					healthcheck_and_load((uint16_t)IncomingOrdersIDs::heakthcheck_and_load, enter_health_and_load, state_machine, Idle),
+					healthcheck_and_unload((uint16_t)IncomingOrdersIDs::healthcheck_and_unload, enter_health_and_unload, state_machine, Idle),
+					start_static_lev((uint16_t)IncomingOrdersIDs::start_static_lev_demostration, enter_static_lev, state_machine, Idle),
+					start_dynamic_lev((uint16_t)IncomingOrdersIDs::start_dynamic_lev_demostration, enter_dynamic_lev, state_machine, Idle, &traction_points),
+					start_traction((uint16_t)IncomingOrdersIDs::start_traction_demostration, enter_traction, state_machine, Idle, &traction_points)
 		{}
 
 		static void enter_health_and_load(){

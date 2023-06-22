@@ -11,6 +11,7 @@ namespace VCU{
 		Data<VEHICLE>& data;
 		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
+		OutgoingOrders<VEHICLE>& outgoing_orders;
 		EncoderSensor& encoder;
 		StateMachine state_machine;
 
@@ -18,12 +19,14 @@ namespace VCU{
 
 		enum DynamicLevStates{
 			Idle,
+			CloseContactors,
 			Accelerating,
 			Brake,
+			OpenContactors,
 		};
 
-		TractionLevStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>&actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-			data(data),actuators(actuators),tcp_handler(tcp), encoder(encoder)
+		TractionLevStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>&actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
+			data(data),actuators(actuators),tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder)
 		{}
 
 		void add_transitions(){}
@@ -38,8 +41,10 @@ namespace VCU{
 
 		void init(){
 			state_machine = {Idle};
+			state_machine.add_state(CloseContactors);
 			state_machine.add_state(Accelerating);
 			state_machine.add_state(Brake);
+			state_machine.add_state(OpenContactors);
 
 			add_on_enter_actions();
 			add_on_exit_actions();

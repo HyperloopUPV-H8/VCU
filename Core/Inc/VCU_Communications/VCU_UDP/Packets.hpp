@@ -32,11 +32,14 @@ namespace VCU{
 	class Packets<VCU_MODE::VEHICLE>{
 	public:
 		//TODO: Hay que revisar todos los paquetes
+		//Outgoing packets
 		StackPacket<9,VALVE_STATE, float, float> regulator_packet;
 		StackPacket<5,REED_STATE, REED_STATE, REED_STATE, REED_STATE, bool> reed_packet;
 		StackPacket<16,double,double> bottle_temperature_packet;
 		StackPacket<12,float,float,float> pressure_packets;
 		StackPacket<8, float,float> environmental_packet;
+
+		//Incoming packets
 
 		Packets(Data<VEHICLE>& data) :
 				regulator_packet(211, &data.valve_state, &data.regulator_reference_pressure, &data.regulator_real_pressure),

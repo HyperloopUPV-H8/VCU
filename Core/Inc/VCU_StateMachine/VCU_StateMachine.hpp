@@ -99,6 +99,7 @@ namespace VCU{
 		Data<VEHICLE>& data;
 		Actuators<VEHICLE>& actuators;
 		TCP<VEHICLE>& tcp_handler;
+		OutgoingOrders<VEHICLE>& outgoing_orders;
 		EncoderSensor& encoder;
 		SpecificStateMachine<VEHICLE> specific_state_machine;
 		StateMachine general_state_machine;
@@ -113,8 +114,8 @@ namespace VCU{
 			FAULT
 		};
 
-		GeneralStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, EncoderSensor& encoder) :
-			data(data), actuators(actuators), tcp_handler(tcp), encoder(encoder), specific_state_machine(data, actuators, tcp, encoder)
+		GeneralStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
+			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder), specific_state_machine(data, actuators, tcp, outgoing_orders, encoder)
 		{}
 
 		void add_transitions(){

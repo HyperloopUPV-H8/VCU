@@ -20,6 +20,7 @@
 #include "VCU_Communications/VCU_TCP/IncomingOrders.hpp"
 #include "VCU_Communications/VCU_UDP/Packets.hpp"
 
+#include "VCU_StateMachine/VCU_ContactorsStateMachine.hpp"
 #include "VCU_StateMachine/VCU_HealtCheckLoadStateMachine.hpp"
 #include "VCU_StateMachine/VCU_HealtCheckUnloadStateMachine.hpp"
 #include "VCU_StateMachine/VCU_DynamicLevStateMachine.hpp"

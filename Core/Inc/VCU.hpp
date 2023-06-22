@@ -57,13 +57,14 @@ namespace VCU{
 		TCP<VCU_MODE::VEHICLE> tcp_handler;
 		UDP<VCU_MODE::VEHICLE> udp_handler;
 		IncomingOrders<VCU_MODE::VEHICLE> incoming_orders;
+		OutgoingOrders<VCU_MODE::VEHICLE> outgoing_orders;
 		Packets<VCU_MODE::VEHICLE> packets;
 		EncoderSensor encoder;
 		GeneralStateMachine<VCU_MODE::VEHICLE> state_machine_handler;
 
 		VCU_CLASS():data(), actuators(data), environmental_sensors(data), tcp_handler(), udp_handler(), incoming_orders(data), packets(data),
 					encoder(Pinout::TAPE1, Pinout::TAPE2, &data.tapes_position, &data.tapes_direction, &data.tapes_speed, &data.tapes_acceleration)
-					,state_machine_handler(data, actuators, tcp_handler, encoder)
+					,state_machine_handler(data, actuators, tcp_handler, outgoing_orders, encoder)
 				{}
 
 		void init(){
