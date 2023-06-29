@@ -16,7 +16,9 @@ namespace VCU{
 	};
 
 	enum class TractionOrders: uint16_t{
-
+		MOVE = 612,
+		BRAKE = 613,
+		TURN_OFF = 614,
 	};
 
 	enum class BatteryOrders: uint16_t{
@@ -33,12 +35,21 @@ namespace VCU{
 		StackOrder<0> take_off_order;
 		StackOrder<0> landing_order;
 
+		StackOrder<4, float> move;
+		StackOrder<0> brake;
+		StackOrder<0> turn_off;
+
 		StackOrder<0> close_contactors;
 		StackOrder<0> open_contactors;
+
+		float speed = 0.0f;
 
 		OutgoingOrders() :
 			take_off_order((uint16_t)LevitationOrdes::TAKE_OFF),
 			landing_order((uint16_t)LevitationOrdes::LANDING),
+			move((uint16_t)TractionOrders::MOVE, &speed),
+			brake((uint16_t)TractionOrders::BRAKE),
+			turn_off((uint16_t)TractionOrders::TURN_OFF),
 			close_contactors((uint16_t)BatteryOrders::CLOSE_CONTACTORS),
 			open_contactors((uint16_t)BatteryOrders::OPEN_CONTACTORS)
 		{}

@@ -37,7 +37,9 @@ namespace VCU{
 			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder),
 			close_contactors_state_machine(data, tcp_handler, outgoing_orders),
 			open_contactors_state_machine(data, tcp_handler, outgoing_orders)
-		{}
+		{
+			init();
+		}
 
 		void add_transitions(){
 			//Quitar los frenos debe hacerse manualmente con una orden una vez finalizado el procedure

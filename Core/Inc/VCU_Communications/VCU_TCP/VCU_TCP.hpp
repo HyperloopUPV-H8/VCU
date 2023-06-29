@@ -47,13 +47,13 @@ namespace VCU{
 			BACKEND_CONNECTION = ServerSocket(VCU_IP, SERVER_PORT);
 
 			OBCCU_CONNECTION = Socket(VCU_IP, CLIENT_PORT, OBCCU_IP, SERVER_PORT);
-			OBCCU_CONNECTION.reconnect();
+//			OBCCU_CONNECTION.reconnect();
 
 			BMSL_CONNECTION = Socket(VCU_IP, CLIENT_PORT, BMSL_IP, SERVER_PORT);
-			BMSL_CONNECTION.reconnect();
+//			BMSL_CONNECTION.reconnect();
 
 			PCU_CONNECTION = Socket(VCU_IP, CLIENT_PORT, PCU_IP, SERVER_PORT);
-			PCU_CONNECTION.reconnect();
+//			PCU_CONNECTION.reconnect();
 
 			LCU_MASTER_CONNECTION = Socket(VCU_IP, CLIENT_PORT, LCU_MASTER_IP, SERVER_PORT);
 		}
@@ -80,15 +80,15 @@ namespace VCU{
 
         bool check_connections(){
         	return
-        	BACKEND_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+        	BACKEND_CONNECTION.is_connected()
 			&&
-			OBCCU_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			OBCCU_CONNECTION.is_connected()
 			&&
-			BMSL_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			BMSL_CONNECTION.is_connected()
 			&&
-			LCU_MASTER_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			LCU_MASTER_CONNECTION.is_connected()
 			&&
-			PCU_CONNECTION.state == ServerSocket::ServerState::ACCEPTED
+			PCU_CONNECTION.is_connected()
 			;
         }
 	};

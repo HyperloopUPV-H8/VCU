@@ -15,14 +15,16 @@ namespace VCU{
 
 		bool ended = false;
 
-		enum DynamicLevStates{
+		enum CloseContactorStates{
 			RequestClose,
 			Closed,
 		};
 
 		CloseContactorsStateMachine(Data<VEHICLE>& data, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE> outgoing_orders) :
 			data(data), tcp_handler(tcp), outgoing_orders(outgoing_orders)
-		{}
+		{
+			init();
+		}
 
 		void add_transitions(){
 			state_machine.add_transition(RequestClose, Closed, [&](){
@@ -72,14 +74,16 @@ namespace VCU{
 
 		bool ended = false;
 
-		enum DynamicLevStates{
+		enum OpenContactorsStates{
 			RequestOpen,
 			Opened,
 		};
 
 		OpenContactorsStateMachine(Data<VEHICLE>& data, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE> outgoing_orders) :
 			data(data), tcp_handler(tcp), outgoing_orders(outgoing_orders)
-		{}
+		{
+			init();
+		}
 
 		void add_transitions(){
 			state_machine.add_transition(RequestOpen, Opened, [&](){
@@ -103,8 +107,9 @@ namespace VCU{
 		void register_timed_actions(){}
 
 		void init(){
-			state_machine = {RequestOpen};
+			state_machine.add_state(RequestOpen);
 			state_machine.add_state(Opened);
+
 
 			add_on_enter_actions();
 			add_on_exit_actions();

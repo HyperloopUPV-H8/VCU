@@ -18,7 +18,11 @@ namespace VCU{
 
 		CloseContactorsStateMachine<VEHICLE> close_contactors_state_machine;
 		OpenContactorsStateMachine<VEHICLE> open_contactors_state_machine;
+		ReceivingDataStateMachine<VEHICLE> receiving_data_state_machine;
 		PointTravelStateMachine<VEHICLE> point_travel_state_machine;
+
+		StackStateOrder<8, uint32_t, float> traction_data;
+		StackStateOrder<0> traction_end_data;
 
 		StateMachine state_machine;
 
@@ -26,6 +30,7 @@ namespace VCU{
 
 		enum DynamicLevStates{
 			Idle,
+			ReceivingData,
 			CloseContactors,
 			TakeOff,
 			PointTravel,
@@ -37,15 +42,25 @@ namespace VCU{
 			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder),
 			close_contactors_state_machine(data, tcp_handler, outgoing_orders),
 			open_contactors_state_machine(data, tcp_handler, outgoing_orders),
-			point_travel_state_machine(data, tcp_handler, outgoing_orders)
-		{}
+			receiving_data_state_machine(data, tcp_handler),
+			point_travel_state_machine(data, actuators, tcp_handler, outgoing_orders),
+
+			traction_data((uint16_t)IncomingOrdersIDs::traction_data, ReceivingDataStateMachine<VEHICLE>::add_traction_point, receiving_data_state_machine.state_machine, ReceivingDataStateMachine<VEHICLE>::ReceivingDataStates::ReceivingData, &ReceivingDataStateMachine<VEHICLE>::received_data_distance, &ReceivingDataStateMachine<VEHICLE>::received_data_speed),
+			traction_end_data((uint16_t)IncomingOrdersIDs::traction_end_data, ReceivingDataStateMachine<VEHICLE>::last_data_packet, receiving_data_state_machine.state_machine, ReceivingDataStateMachine<VEHICLE>::ReceivingDataStates::ReceivingData)
+		{
+			init();
+		}
 
 		void add_transitions(){
-			state_machine.add_transition(Idle, CloseContactors, [&](){
+			state_machine.add_transition(Idle, ReceivingData, [&](){
 				if(not ended){
 					return true;
 				}
 				return false;
+			});
+
+			state_machine.add_transition(ReceivingData, CloseContactors, [&](){
+				return receiving_data_state_machine.ended;
 			});
 
 			state_machine.add_transition(CloseContactors, TakeOff, [&](){
@@ -72,12 +87,17 @@ namespace VCU{
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
+				data.clean_traction_points();
+	        	ReceivingDataStateMachine<VEHICLE>::clean_traction_points();
+			}, Idle);
+
+			state_machine.add_enter_action([&](){
 				actuators.brakes.not_brake();
 				actuators.brakes.enable_emergency_brakes();
 			}, CloseContactors);
 
 			state_machine.add_enter_action([&](){
-				//TODO: Enviar orden de levitar
+				tcp_handler.send_to_lcu(outgoing_orders.take_off_order);
 
 				Time::set_timeout(levitation_timeout, [&](){
 					if(state_machine.current_state == TakeOff && data.levitation_state != STABLE){
@@ -87,7 +107,7 @@ namespace VCU{
 			}, TakeOff);
 
 			state_machine.add_enter_action([&](){
-				//TODO: Enviar orden de landing
+				tcp_handler.send_to_lcu(outgoing_orders.landing_order);
 
 				Time::set_timeout(landing_timeout, [&](){
 					if(state_machine.current_state == Landing && data.levitation_state != IDLE){
@@ -104,6 +124,19 @@ namespace VCU{
 
 		void add_on_exit_actions(){
 			state_machine.add_exit_action([&](){
+				close_contactors_state_machine.ended = false;
+			}, CloseContactors);
+
+			state_machine.add_exit_action([&](){
+				receiving_data_state_machine.ended = false;
+			}, ReceivingData);
+
+			state_machine.add_exit_action([&](){
+				point_travel_state_machine.ended = false;
+			}, PointTravel);
+
+			state_machine.add_exit_action([&](){
+				open_contactors_state_machine.ended = false;
 				ended = true;
 			}, OpenContactors);
 		}
@@ -112,6 +145,7 @@ namespace VCU{
 
 		void init(){
 			state_machine = {Idle};
+			state_machine.add_state(ReceivingData);
 			state_machine.add_state(CloseContactors);
 			state_machine.add_state(TakeOff);
 			state_machine.add_state(PointTravel);

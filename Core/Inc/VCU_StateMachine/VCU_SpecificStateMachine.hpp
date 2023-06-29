@@ -20,11 +20,9 @@ namespace VCU{
 		StaticLevStateMachine<VEHICLE> static_lev_state_machine;
 		DynamicLevStateMachine<VEHICLE> dynamic_lev_state_machine;
 
-		StackStateOrder<0> healthcheck_and_load;
-		StackStateOrder<0> healthcheck_and_unload;
-		StackStateOrder<0> start_static_lev;
-		StackStateOrder<0, vector<uint32_t>> start_dynamic_lev;
-		StackStateOrder<0, vector<uint32_t>> start_traction;
+		StackStateOrder<0> start_crawling;
+		StackStateOrder<0> take_off;
+		StackStateOrder<0> landing;
 
 		StateMachine state_machine;
 
@@ -52,13 +50,13 @@ namespace VCU{
 					traction_state_machine(data, actuators, tcp, outgoing_orders, encoder),
 					static_lev_state_machine(data, actuators, tcp, outgoing_orders, encoder),
 					dynamic_lev_state_machine(data, actuators, tcp, outgoing_orders, encoder),
+					start_crawling((uint16_t)IncomingOrdersIDs::start_crawling, LoadStateMachine<VEHICLE>::enter_crawling, health_load_state_machine.state_machine, LoadStateMachine<VEHICLE>::UnloadStates::Pushing),
+					take_off((uint16_t)IncomingOrdersIDs::take_off, StaticLevStateMachine<VEHICLE>::start_levitation, static_lev_state_machine.state_machine, StaticLevStateMachine<VEHICLE>::StaticLevStates::LevOff),
+					landing((uint16_t)IncomingOrdersIDs::landing, StaticLevStateMachine<VEHICLE>::stop_levitation, static_lev_state_machine.state_machine, StaticLevStateMachine<VEHICLE>::StaticLevStates::LevOn)
 
-					healthcheck_and_load((uint16_t)IncomingOrdersIDs::heakthcheck_and_load, enter_health_and_load, state_machine, Idle),
-					healthcheck_and_unload((uint16_t)IncomingOrdersIDs::healthcheck_and_unload, enter_health_and_unload, state_machine, Idle),
-					start_static_lev((uint16_t)IncomingOrdersIDs::start_static_lev_demostration, enter_static_lev, state_machine, Idle),
-					start_dynamic_lev((uint16_t)IncomingOrdersIDs::start_dynamic_lev_demostration, enter_dynamic_lev, state_machine, Idle, &data.traction_points),
-					start_traction((uint16_t)IncomingOrdersIDs::start_traction_demostration, enter_traction, state_machine, Idle, &data.traction_points)
-		{}
+		{
+			init();
+		}
 
 		static void enter_health_and_load(){
 			healthcheck_and_load_requested = true;
@@ -124,12 +122,6 @@ namespace VCU{
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
-				health_load_state_machine.ended = false;
-				health_unload_state_machine.ended = false;
-				dynamic_lev_state_machine.ended = false;
-				static_lev_state_machine.ended = false;
-				traction_state_machine.ended = false;
-
 				healthcheck_and_load_requested = false;
 				healthcheck_and_unload_requested = false;
 				start_static_lev_requested = false;
@@ -138,7 +130,27 @@ namespace VCU{
 			}, Idle);
 		}
 
-		void add_on_exit_actions(){}
+		void add_on_exit_actions(){
+			state_machine.add_exit_action([&](){
+				health_unload_state_machine.ended = false;
+			}, Unload);
+
+			state_machine.add_exit_action([&](){
+				health_load_state_machine.ended = false;
+			}, Load);
+
+			state_machine.add_exit_action([&](){
+				traction_state_machine.ended = false;
+			}, Traction);
+
+			state_machine.add_exit_action([&](){
+				static_lev_state_machine.ended = false;
+			}, StaticLev);
+
+			state_machine.add_exit_action([&](){
+				dynamic_lev_state_machine.ended = false;
+			}, DynamicLev);
+		}
 
 		void register_timed_actions(){}
 

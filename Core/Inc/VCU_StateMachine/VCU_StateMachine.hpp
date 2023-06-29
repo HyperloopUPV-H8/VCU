@@ -15,7 +15,9 @@ namespace VCU{
 		static constexpr uint16_t max_tcp_connection_timeout = 25000; //ms
 
 		GeneralStateMachine(Data<BRAKE_VALIDATION>& data, Actuators<BRAKE_VALIDATION>& actuators , TCP<BRAKE_VALIDATION>& tcp_handler) : actuators(actuators), tcp_handler(tcp_handler)
-		{}
+		{
+			init();
+		}
 
 		enum States{
 			INITIAL,
@@ -104,9 +106,15 @@ namespace VCU{
 		SpecificStateMachine<VEHICLE> specific_state_machine;
 		StateMachine general_state_machine;
 
+		StackStateOrder<0> healthcheck_and_load;
+		StackStateOrder<0> healthcheck_and_unload;
+		StackStateOrder<0> start_static_lev;
+		StackStateOrder<0> start_dynamic_lev;
+		StackStateOrder<0> start_traction;
+
 		bool tcp_timeout = false;
 
-		static constexpr uint16_t max_tcp_connection_timeout = 30000; //ms
+		static constexpr uint16_t max_tcp_connection_timeout = 65000; //ms //TODO: arreglar
 
 		enum States{
 			INITIAL,
@@ -115,13 +123,23 @@ namespace VCU{
 		};
 
 		GeneralStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
-			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder), specific_state_machine(data, actuators, tcp, outgoing_orders, encoder)
-		{}
+			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder),
+			specific_state_machine(data, actuators, tcp, outgoing_orders, encoder),
+
+			healthcheck_and_load((uint16_t)IncomingOrdersIDs::heakthcheck_and_load, SpecificStateMachine<VEHICLE>::enter_health_and_load, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
+			healthcheck_and_unload((uint16_t)IncomingOrdersIDs::healthcheck_and_unload, SpecificStateMachine<VEHICLE>::enter_health_and_unload, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
+			start_static_lev((uint16_t)IncomingOrdersIDs::start_static_lev_demostration, SpecificStateMachine<VEHICLE>::enter_static_lev, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
+			start_dynamic_lev((uint16_t)IncomingOrdersIDs::start_dynamic_lev_demostration, SpecificStateMachine<VEHICLE>::enter_dynamic_lev, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
+			start_traction((uint16_t)IncomingOrdersIDs::start_traction_demostration, SpecificStateMachine<VEHICLE>::enter_traction, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle)
+		{
+			init();
+		}
 
 		void add_transitions(){
 			//todo: COMPROBAR que estan todos conectados antes de pasar a operational
 			general_state_machine.add_transition(INITIAL, OPERATIONAL, [&](){
-				return tcp_handler.check_connections();
+				bool res = tcp_handler.check_connections();
+				return res;
 			});
 			general_state_machine.add_transition(INITIAL, FAULT, [&](){
 				if(tcp_timeout){
@@ -171,7 +189,7 @@ namespace VCU{
 				actuators.brakes.not_brake();
 			}, FAULT);
 			general_state_machine.add_exit_action([&](){
-				actuators.led_operational.turn_on();
+				actuators.led_operational.turn_off();
 			}, OPERATIONAL);
 			general_state_machine.add_exit_action([&](){
 				actuators.led_operational.turn_off();

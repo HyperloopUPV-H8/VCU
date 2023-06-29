@@ -70,8 +70,8 @@ namespace VCU{
 		void init(){
 			STLIB::start();
 			actuators.brakes.init();
-			udp_handler.init();
 			tcp_handler.init();
+			udp_handler.init();
 		}
 
 		static void read_brakes_sensors(){
@@ -83,11 +83,11 @@ namespace VCU{
 		}
 
 		static void send_to_backend(){
-			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.regulator_packet);
-			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.pressure_packets);
-			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.bottle_temperature_packet);
-			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.reed_packet);
-			vcu->udp_handler.BACKEND_CONNECTION.send(vcu->packets.environmental_packet);
+			vcu->udp_handler.send_to_backend(vcu->packets.regulator_packet);
+			vcu->udp_handler.send_to_backend(vcu->packets.pressure_packets);
+			vcu->udp_handler.send_to_backend(vcu->packets.bottle_temperature_packet);
+			vcu->udp_handler.send_to_backend(vcu->packets.reed_packet);
+			vcu->udp_handler.send_to_backend(vcu->packets.environmental_packet);
 		}
 
 		static void update_state_machine(){
@@ -119,3 +119,4 @@ namespace VCU{
 }
 
 VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION>* VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION>::vcu = nullptr;
+VCU::VCU_CLASS<VCU::VCU_MODE::VEHICLE>* VCU::VCU_CLASS<VCU::VCU_MODE::VEHICLE>::vcu = nullptr;

@@ -19,15 +19,13 @@ namespace VCU{
 
 		StateMachine state_machine;
 
-		StackStateOrder<0> take_off;
-		StackStateOrder<0> landing;
-
 		bool ended = false;
 
 		static bool start_levitation_requested;
 		static bool stop_levitation_requested;
 
-		enum DynamicLevStates{
+		enum StaticLevStates{
+			Idle,
 			CloseContactors,
 			LevOff,
 			LevOn,
@@ -37,10 +35,10 @@ namespace VCU{
 		StaticLevStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
 			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder),
 			close_contactors_state_machine(data, tcp_handler, outgoing_orders),
-			open_contactors_state_machine(data, tcp_handler, outgoing_orders),
-			take_off((uint16_t)IncomingOrdersIDs::take_off, start_levitation, state_machine, LevOff),
-			landing((uint16_t)IncomingOrdersIDs::landing, stop_levitation, state_machine, LevOn)
-		{}
+			open_contactors_state_machine(data, tcp_handler, outgoing_orders)
+		{
+			init();
+		}
 
 		static void start_levitation(){
 			start_levitation_requested = true;
@@ -51,12 +49,19 @@ namespace VCU{
 		}
 
 		void add_transitions(){
+			state_machine.add_transition(Idle, CloseContactors, [&](){
+				if(not ended){
+					return true;
+				}
+				return false;
+			});
+
 			state_machine.add_transition(CloseContactors, LevOff, [&](){
 				return close_contactors_state_machine.ended;
 			});
 
 			state_machine.add_transition(LevOff, LevOn, [&](){
-				if(start_levitation_requested && not ended){
+				if(start_levitation_requested){
 					start_levitation_requested = false;
 					return true;
 				}
@@ -71,7 +76,7 @@ namespace VCU{
 				return false;
 			});
 
-			state_machine.add_transition(OpenContactors, LevOff, [&](){
+			state_machine.add_transition(OpenContactors, Idle, [&](){
 				return open_contactors_state_machine.ended;
 			});
 		}
@@ -99,7 +104,8 @@ namespace VCU{
 		void register_timed_actions(){}
 
 		void init(){
-			state_machine = {CloseContactors};
+			state_machine = {Idle};
+			state_machine.add_state(CloseContactors);
 			state_machine.add_state(LevOff);
 			state_machine.add_state(LevOn);
 			state_machine.add_state(OpenContactors);

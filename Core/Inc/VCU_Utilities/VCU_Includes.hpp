@@ -21,6 +21,7 @@
 #include "VCU_Communications/VCU_UDP/Packets.hpp"
 
 #include "VCU_StateMachine/VCU_ContactorsStateMachine.hpp"
+#include "VCU_StateMachine/VCU_ReceivingDataStateMachine.hpp"
 #include "VCU_StateMachine/VCU_PointTravelStateMachine.hpp"
 #include "VCU_StateMachine/VCU_HealtCheckLoadStateMachine.hpp"
 #include "VCU_StateMachine/VCU_HealtCheckUnloadStateMachine.hpp"

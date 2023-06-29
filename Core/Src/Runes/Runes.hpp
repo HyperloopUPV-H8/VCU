@@ -6,7 +6,6 @@ DMA_HandleTypeDef hdma_adc2;
 DMA_HandleTypeDef hdma_adc3;
 DMA_HandleTypeDef hdma_i2c2_rx;
 DMA_HandleTypeDef hdma_i2c2_tx;
-I2C_HandleTypeDef hi2c2;
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 ADC_HandleTypeDef hadc3;
@@ -158,6 +157,9 @@ vector<reference_wrapper<TimerPeripheral>> TimerPeripheral::timers = {
 
 PWMmap TimerPeripheral::available_pwm  = {
 	{PB9, {timer17, {TIM_CHANNEL_1, NORMAL}}},
+	{PF1, {timer23, {TIM_CHANNEL_2, NORMAL}}},
+	{PF2, {timer23, {TIM_CHANNEL_3, NORMAL}}},
+	{PF3, {timer23, {TIM_CHANNEL_4, NORMAL}}}
 };
 
 DualPWMmap TimerPeripheral::available_dual_pwms = {
@@ -270,13 +272,12 @@ map<uint16_t, ExternalInterrupt::Instance> ExternalInterrupt::instances = {
  ***********************************************/
 
 #ifdef HAL_I2C_MODULE_ENABLED
-extern I2C_HandleTypeDef hi2c2;
-I2C::Instance I2C::instance2 = { .SCL = PF1, .SDA = PB11, .hi2c = &hi2c2, .instance = I2C2, .RX_DMA = DMA::Stream::DMA1Stream3, .TX_DMA = DMA::Stream::DMA1Stream4};
-I2C::Peripheral I2C::i2c2 = I2C::Peripheral::peripheral2;
+//extern I2C_HandleTypeDef hi2c2;
+
 unordered_map<I2C::Peripheral, I2C::Instance*> I2C::available_i2cs = {
-	{I2C::i2c2, &I2C::instance2}
+
 };
 unordered_map<uint32_t, uint32_t> I2C::available_speed_frequencies = {
-	{100, 0x60404E72}
+
 };
 #endif

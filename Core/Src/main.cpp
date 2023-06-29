@@ -30,12 +30,77 @@ void a_op_func(){
 	global->force_change_state(op);
 }
 
+//void state_machine_test(){
+//	DigitalOutput flash( VCU::Pinout::FLASH_LED);
+//	DigitalOutput fault( VCU::Pinout::FAULT_LED);
+//
+//	STLIB::start();
+//
+//	flash.turn_off();
+//
+//	StateMachine m2 = 0;
+//	m2.add_state(1);
+//
+//	m2.add_enter_action([&](){
+//		flash.turn_on();
+//	},0);
+//
+//	m2.add_enter_action([&](){
+//		fault.turn_on();
+//	},1);
+//
+//	m2.add_transition(0, 1, [&](){
+//		return true;
+//	});
+//
+//	StateMachine m1 = 0;
+//	m1.add_state(1);
+//
+//	m1.add_state_machine(m2, 1);
+//
+//	m1.add_transition(0, 1, [&](){
+//		return true;
+//	});
+//
+//	m1.check_transitions();
+//	while(1){
+//		STLIB::update();
+//		__NOP();
+//	}
+//
+//}
+
+//void emulate_pcu(){
+//	STLIB::start();
+//
+//	ServerSocket socket(VCU::PCU_IP, VCU::SERVER_PORT);
+//
+//
+//	while(1){
+//		STLIB::update();
+//	}
+//}
+//
+//void emulate_bmsl(){
+//	STLIB::start();
+//
+//	ServerSocket socket(VCU::BMSL_IP, VCU::SERVER_PORT);
+//
+//
+//	while(1){
+//		STLIB::update();
+//	}
+//}
+
+
 int main(void){
-//{
-//	VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION> vcu;
-//	VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION>::vcu = &vcu;
+//	state_machine_test();
+
+
+//	VCU::VCU_CLASS<VCU::VCU_MODE::VEHICLE> vcu;
+//	VCU::VCU_CLASS<VCU::VCU_MODE::VEHICLE>::vcu = &vcu;
 //	vcu.init();
-//	VCU::CyclicActions<VCU::VCU_MODE::BRAKE_VALIDATION>::register_cyclic_actions();
+//	VCU::CyclicActions<VCU::VCU_MODE::VEHICLE>::register_cyclic_actions();
 
 	est current_state = ini;
 	STLIB::start();
@@ -90,7 +155,7 @@ int main(void){
 
 	Time::register_low_precision_alarm(10, [&](){
 		current_state = (est)machine.current_state;
-		//udp.send(data_pack);
+		udp.send(data_pack);
 	});
 
 

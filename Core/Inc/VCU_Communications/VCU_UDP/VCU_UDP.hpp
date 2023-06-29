@@ -51,11 +51,13 @@ namespace VCU{
         	BMSL_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, BMSL_IP, UDP_PORT);
         	BMSL_CONNECTION.reconnect();
 
+        	LCU_MASTER_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, LCU_MASTER_IP, UDP_PORT);
+			LCU_MASTER_CONNECTION.reconnect();
+
         	PCU_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, PCU_IP, UDP_PORT);
         	PCU_CONNECTION.reconnect();
 
-        	LCU_MASTER_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, LCU_MASTER_IP, UDP_PORT);
-        	LCU_MASTER_CONNECTION.reconnect();
+
         }
 
         void send_to_backend(Packet& packet){

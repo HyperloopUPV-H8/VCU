@@ -22,6 +22,8 @@ namespace VCU{
 		take_off = 226,
 		landing = 227,
 		start_crawling = 231,
+		traction_data = 233,
+		traction_end_data = 234,
 	};
 
 

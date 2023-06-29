@@ -25,6 +25,10 @@ namespace VCU{
 
         public:
         LEDSActuator(Pin& red_pin, Pin& green_pin, Pin& blue_pin): red(red_pin), green(green_pin), blue(blue_pin){
+
+        }
+
+        void leds_init(){
             red.set_frequency(1000);
             green.set_frequency(1000);
             blue.set_frequency(1000);

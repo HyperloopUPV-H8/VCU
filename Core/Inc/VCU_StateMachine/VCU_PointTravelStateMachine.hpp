@@ -7,86 +7,143 @@ namespace VCU{
 
 	template<>
 	class PointTravelStateMachine<VEHICLE>{
-		static constexpr uint32_t initial_aux_state = 0;
+		static constexpr float min_speed = 1.0f;
 
 	public:
 		Data<VEHICLE>& data;
+		Actuators<VEHICLE> actuators;
 		TCP<VEHICLE>& tcp_handler;
 		OutgoingOrders<VEHICLE>& outgoing_orders;
 
 		StateMachine state_machine;
 
 		enum TravelStates{
-			ReceivingData,
+			Idle,
 			Calculating,
 			MovingForward,
 			MovingBackward,
 			Braking,
-			End,
+			End
 		};
 
 		bool ended = false;
 
-		uint32_t aux_last_state;
+		point_t initial_point;
+		point_t* calculated_point = nullptr;
+		DIRECTION calculated_direction = DIRECTION::FORWARD;
+		bool calculating = true;
 
-		PointTravelStateMachine(Data<VEHICLE>& data, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders) :
-			data(data),tcp_handler(tcp), outgoing_orders(outgoing_orders)
-		{}
+		PointTravelStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE> actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders) :
+			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders)
+		{
+			init();
+		}
 
 		void add_transitions(){
+			state_machine.add_transition(Idle, Calculating, [&](){
+				return not ended;
+			});
 
-			uint32_t next_state;
-			for(uint32_t current_state = initial_aux_state; current_state < data.traction_points.size() + initial_aux_state; current_state++){
+			state_machine.add_transition(Calculating, MovingForward, [&](){
+				return not calculating && calculated_direction == DIRECTION::FORWARD;
+			});
 
-				if (current_state + 1 > aux_last_state) {
-					next_state = (uint32_t)End;
-				}else{
-					next_state = ++current_state;
+			state_machine.add_transition(Calculating, MovingBackward, [&](){
+				return not calculating && calculated_direction == DIRECTION::BACKWARD;
+			});
+
+			state_machine.add_transition(MovingForward, Calculating, [&](){
+				if (data.tapes_position >= calculated_point->position - data.change_direction_distance_lookup_table[(uint32_t)ceil(data.engine_speed)]) {
+					return true;
 				}
 
-				state_machine.add_transition(current_state, next_state, [&](){
-					uint32_t speed = std::ceil(std::max(data.target_speed, data.engine_speed));
-					uint32_t brake_distance = data.brake_distance_lookup_table[speed];
-					uint32_t objective_position = data.traction_points.at(current_state - initial_aux_state);
-					if (data.tapes_position > objective_position) {
-						return data.tapes_position <= (objective_position + brake_distance);
-					}else{
-						return data.tapes_position >= (objective_position - brake_distance);
-					}
-				});
-			}
+				return false;
+			});
+
+			state_machine.add_transition(MovingBackward, Calculating, [&](){
+				if (data.tapes_position <= calculated_point->position + data.change_direction_distance_lookup_table[(uint32_t)ceil(data.engine_speed)]) {
+					return true;
+				}
+
+				return false;
+			});
+
+			state_machine.add_transition(Braking, End, [&](){
+				return data.engine_speed <= min_speed;
+			});
 		}
 
 		void add_on_enter_actions(){
-			for(uint32_t current_state = initial_aux_state; current_state < data.traction_points.size() + initial_aux_state; current_state++){
-
-				state_machine.add_enter_action([&](){
-					uint32_t objective_position = data.traction_points.at(current_state - initial_aux_state);
-					if (data.tapes_position > objective_position) {
-						//TODO: send order to MOVE BACKWARDS
-					}else{
-						//TODO: send order to MOVE FORWARDS
-					}
-				}, current_state);
-			}
+			state_machine.add_enter_action([&](){
+				initial_point = point_t(data.tapes_position, 0.0f);
+			}, Idle);
 
 			state_machine.add_enter_action([&](){
+				calculating = true;
+				if(not data.get_next_point(calculated_point)){
+
+					state_machine.force_change_state(Braking);
+					return;
+				}
+
+				if (calculated_point->position > data.tapes_position ) {
+					calculated_direction = DIRECTION::FORWARD;
+				}else{
+					calculated_direction = DIRECTION::BACKWARD;
+				}
+
+				calculating = false;
+
+			}, Calculating);
+
+			state_machine.add_enter_action([&](){
+				calculating = false;
+
+				outgoing_orders.speed = calculated_point->speed;
+				tcp_handler.send_to_pcu(outgoing_orders.move);
+
+			}, MovingForward);
+
+			state_machine.add_enter_action([&](){
+				calculating = false;
+
+				outgoing_orders.speed = calculated_point->speed;
+				tcp_handler.send_to_pcu(outgoing_orders.move);
+
+			}, MovingBackward);
+
+			state_machine.add_enter_action([&](){
+				tcp_handler.send_to_pcu(outgoing_orders.brake);
+			}, Braking);
+
+			state_machine.add_enter_action([&](){
+				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
 				ended = true;
 			}, End);
 		}
 
-		void add_on_exit_actions(){}
+		void add_on_exit_actions(){
+			state_machine.add_exit_action([&](){
+				actuators.brakes.not_brake();
+			}, Braking);
+		}
 
-		void register_timed_actions(){}
+		void register_timed_actions(){
+			state_machine.add_low_precision_cyclic_action([&](){
+				if (data.tapes_position <= initial_point.position && data.engine_speed != 0.0f) {
+					actuators.brakes.brake();
+				}
+			}, (ms)1, Braking);
+
+		}
 
 		void init(){
-
-			state_machine = initial_aux_state;
-
-			for(uint32_t i = initial_aux_state + 1; i < (data.traction_points.size() + initial_aux_state); i++){
-				state_machine.add_state(i);
-				aux_last_state = i;
-			}
+			state_machine = {Idle};
+			state_machine.add_state(Calculating);
+			state_machine.add_state(MovingForward);
+			state_machine.add_state(MovingBackward);
+			state_machine.add_state(Braking);
+			state_machine.add_state(End);
 
 			add_on_enter_actions();
 			add_on_exit_actions();

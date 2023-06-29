@@ -7,6 +7,8 @@ namespace VCU{
 
 	template<>
 	class LoadStateMachine<VEHICLE>{
+		 static constexpr float crawling_speed = 3.0f;
+
 	public:
 		Data<VEHICLE>& data;
 		Actuators<VEHICLE>& actuators;
@@ -18,8 +20,6 @@ namespace VCU{
 		OpenContactorsStateMachine<VEHICLE> open_contactors_state_machine;
 
 		StateMachine state_machine;
-
-		StackStateOrder<0> start_crawling;
 
 		bool ended = false;
 
@@ -37,9 +37,10 @@ namespace VCU{
 		LoadStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
 			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder),
 			close_contactors_state_machine(data, tcp_handler, outgoing_orders),
-			open_contactors_state_machine(data, tcp_handler, outgoing_orders),
-			start_crawling((uint16_t)IncomingOrdersIDs::start_crawling, enter_crawling, state_machine, Pushing)
-		{}
+			open_contactors_state_machine(data, tcp_handler, outgoing_orders)
+		{
+			init();
+		}
 
 		static void enter_crawling(){
 			crawling_requested = true;
@@ -87,18 +88,17 @@ namespace VCU{
 			}, Pushing);
 
 			state_machine.add_enter_action([&](){
-				//TODO: set engine parameters
-				//TODO: send start engine order
+				outgoing_orders.speed = crawling_speed;
+				tcp_handler.send_to_pcu(outgoing_orders.move);
 			}, Crawling);
 
 			state_machine.add_enter_action([&](){
-				//Quizas hace falta darle un offset (avanzar un poco más) para evitar que entre
-				//en fault si se mueve ligeremante hacia atras y ha quedado demasido cerca de la emergency tape.
-				//TODO: send engine brake order
+				tcp_handler.send_to_pcu(outgoing_orders.brake);
+				actuators.brakes.enable_emergency_brakes();
 			}, Braking);
 
 			state_machine.add_enter_action([&](){
-				actuators.brakes.enable_emergency_brakes();
+				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
 				actuators.brakes.brake();
 			}, OpenContactors);
 		}
@@ -114,9 +114,13 @@ namespace VCU{
 			}, Braking);
 
 			state_machine.add_exit_action([&](){
+				close_contactors_state_machine.ended = false;
+			}, CloseContactors);
+
+			state_machine.add_exit_action([&](){
+				open_contactors_state_machine.ended = false;
 				ended = true;
 			}, OpenContactors);
-
 		}
 
 		void register_timed_actions(){

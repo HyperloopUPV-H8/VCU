@@ -72,16 +72,35 @@ namespace VCU{
         ContactorState contactors_state = ContactorState::Open;
 
         float engine_speed;
+        float engine_acceleration;
 
         //Demostrations
-        float target_speed;
-        vector<uint32_t> traction_points;
+        vector<point_t> traction_points;
 
         uint32_t brake_distance_lookup_table[35] = {
         		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         };
 
-		void add_protections(){
+        uint32_t change_direction_distance_lookup_table[35] = {
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		   };
+
+
+        bool get_next_point(point_t* p){
+         	if (traction_points.empty()) {
+ 				return false;
+ 			}
+
+         	*p = *traction_points.begin();
+         	traction_points.erase(traction_points.begin());
+         	return true;
+         }
+
+        void clean_traction_points(){
+        	traction_points.clear();
+        }
+
+		void add_protections(){//TODO: Mover esto a un archivo separado y completar
 			add_protection(&high_pressure1, Boundary<float, ABOVE>(300));
 			add_protection(&reeds_ok, Boundary<bool, NOT_EQUALS>(true));
 			add_protection(&emergency_tape, Boundary<PinState, EQUALS>(PinState::ON));
