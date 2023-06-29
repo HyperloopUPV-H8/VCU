@@ -2,7 +2,7 @@
  * VCU_UDP.hpp
  *
  *  Created on: Jun 1, 2023
- *      Author: stefancostea
+ *      Author: stefancostea & Pablo
  */
 
 #pragma once
@@ -10,6 +10,7 @@
 #include "DatagramSocket.hpp"
 #include "VCU.hpp"
 #include "VCU_Utilities/VCU_Types.hpp"
+#include "Packets.hpp"
 
 namespace VCU{
 	template<VCU_MODE> class UDP;
@@ -79,5 +80,6 @@ namespace VCU{
         void send_to_lcu(Packet& packet){
         	LCU_MASTER_CONNECTION.send(packet);
         }
+
     };
 }

@@ -159,7 +159,13 @@ namespace VCU{
                 regulator_actuator(Pinout::REGULATOR_OUT, data.regulator_reference_pressure),
                 regulator_sensor(Pinout::REGULATOR_IN, data.regulator_real_pressure),
 
-                emergency_tape(Pinout::EMERGENCY_TAPE, [&](){emergency_tape.read();}, data.emergency_tape),
+                emergency_tape(Pinout::EMERGENCY_TAPE, [&](){
+            		emergency_tape.read();
+            		//INOF: emergency tape enable a nivel bajo
+            		if (data.emergeny_tape_enable == PinState::OFF) {
+						data.emergency_braking = true;
+					}
+            	}, data.emergency_tape),
                 emergency_tape_enable(Pinout::EMERGENCY_TAPE_ENABLE),
 
                 reed1(Pinout::REED1, &data.reed1),
@@ -191,17 +197,17 @@ namespace VCU{
             void brake(){
                 valve_actuator.close();
                 
-                Time::set_timeout(1, [&](){
-                    check_reeds();
-                });
+//                Time::set_timeout(1, [&](){
+//                    check_reeds();
+//                });
             }
 
             void not_brake(){
                 valve_actuator.open();
-
-                Time::set_timeout(1, [&](){
-                    check_reeds();
-                });
+                data.emergency_braking = false;
+//                Time::set_timeout(1, [&](){
+//                    check_reeds();
+//                });
             }
 
             void disable_emergency_brakes(){

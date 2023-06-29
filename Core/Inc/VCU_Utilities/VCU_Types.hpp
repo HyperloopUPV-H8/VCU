@@ -12,9 +12,9 @@ namespace VCU{
         RETRACTED,
     };
 
-    enum DIRECTION{ //TODO: Comprobar que esto es cierto
-    	BACKWARD = 0,
-		FORWARD = 1,
+    enum DIRECTION{
+    	FORWARD = 0,
+		BACKWARD = 1,
     };
 
     enum ContactorState{

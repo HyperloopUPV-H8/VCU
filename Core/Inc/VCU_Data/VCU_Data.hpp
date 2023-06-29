@@ -1,9 +1,8 @@
 #pragma once
 
 #include "ST-LIB.hpp"
-#include "VCU_Utilities/VCU_Types.hpp"
+#include "VCU_Utilities/VCU_Includes.hpp"
 #include "VCU_Mode/VCU_Mode.hpp"
-
 
 namespace VCU{
 
@@ -38,11 +37,17 @@ namespace VCU{
     class Data<VCU::VCU_MODE::VEHICLE>{
         public:
     	//BOARD Data
+    	static constexpr float returning_speed = 5.0f;
+    	static constexpr float crawling_speed = 3.0f;
+		static constexpr float min_speed = 0.0f;
+		static constexpr uint16_t brakes_time = 250;
+
     	float regulator_real_pressure = 0.0f;
         float regulator_reference_pressure = 0.0f;
 
         PinState emergeny_tape_enable = PinState::OFF;
         PinState emergency_tape = PinState::OFF;
+        bool emergency_braking = false;
 
         float high_pressure1 = 0.0f;
         float low_pressure1 = 0.0f;
@@ -65,6 +70,14 @@ namespace VCU{
         double tapes_direction = 0.0f;
         double tapes_speed = 0.0f;
         double tapes_acceleration = 0.0f;
+
+        uint8_t* general_state;
+        uint8_t* specific_state;
+        uint8_t* load_state;
+        uint8_t* unload_state;
+        uint8_t* traction_state;
+        uint8_t* dynamic_lev;
+        uint8_t* static_lev;
 
         //VEHICLE Data
         LevitaionState levitation_state = IDLE;
@@ -100,10 +113,5 @@ namespace VCU{
         	traction_points.clear();
         }
 
-		void add_protections(){//TODO: Mover esto a un archivo separado y completar
-			add_protection(&high_pressure1, Boundary<float, ABOVE>(300));
-			add_protection(&reeds_ok, Boundary<bool, NOT_EQUALS>(true));
-			add_protection(&emergency_tape, Boundary<PinState, EQUALS>(PinState::ON));
-		}
     };
 }

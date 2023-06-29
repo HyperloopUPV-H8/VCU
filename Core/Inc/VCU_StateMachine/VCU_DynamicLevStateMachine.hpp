@@ -76,7 +76,7 @@ namespace VCU{
 			});
 
 			state_machine.add_transition(Landing, OpenContactors, [&](){
-				return data.levitation_state == LevitaionState::IDLE;
+				return data.levitation_state == LevitaionState::STICK_DOWN;
 			});
 
 			state_machine.add_transition(OpenContactors, Idle, [&](){
@@ -161,6 +161,8 @@ namespace VCU{
 			add_transitions();
 			register_timed_actions();
 			add_transitions();
+
+			data.dynamic_lev = &state_machine.current_state;
 		}
 	};
 }

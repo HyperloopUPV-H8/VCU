@@ -6,6 +6,7 @@
 #include "VCU_Data/VCU_Data.hpp"
 #include "VCU_Mode/VCU_Mode.hpp"
 #include "VCU_Pinout/Pinout.hpp"
+#include "VCU_Protections/VCU_Protections.hpp"
 
 #include "VCU_Sensors/VCU_EnviromentalSensors.hpp"
 #include "VCU_Sensors/VCU_RegulatorSensor.hpp"
@@ -28,9 +29,9 @@
 #include "VCU_StateMachine/VCU_DynamicLevStateMachine.hpp"
 #include "VCU_StateMachine/VCU_StaticLevStateMachine.hpp"
 #include "VCU_StateMachine/VCU_TractionStateMachine.hpp"
+#include "VCU_StateMachine/VCU_FaultSpecificStateMachine.hpp"
 #include "VCU_StateMachine/VCU_SpecificStateMachine.hpp"
 #include "VCU_StateMachine/VCU_StateMachine.hpp"
-
 
 
 

@@ -42,7 +42,7 @@ namespace VCU{
 		}
 
 		void add_transitions(){
-			//Quitar los frenos debe hacerse manualmente con una orden una vez finalizado el procedure
+			//INFO: Quitar los frenos debe hacerse manualmente con una orden una vez finalizado el procedure
 			//porque segun el fdd el pod debe estar frenado hasta el momento que se va a sacar
 
 			state_machine.add_transition(Idle, CloseContactors, [&](){
@@ -58,15 +58,17 @@ namespace VCU{
 			});
 
 			state_machine.add_transition(Returning, Crawling, [&](){
-				return data.emergency_tape == PinState::ON; //Si hemos llegado a la zona de emergencia pasamos a fase crawling
+				//INFO: Si hemos llegado a la zona de emergencia pasamos a fase crawling
+				return data.emergency_tape == PinState::ON;
 			});
 
 			state_machine.add_transition(Crawling, Braking, [&](){
-				return data.emergency_tape == PinState::OFF; //Si hemos llegado al final de la zona de emergencia frenamos
+				 //INFO: Si hemos llegado al final de la zona de emergencia frenamos
+				return data.emergency_tape == PinState::OFF;
 			});
 
 			state_machine.add_transition(Braking, OpenContactors, [&](){
-				return data.tapes_acceleration == 0; //TODO: Muy importante hacer esto con la IMU del motor
+				return data.engine_speed <= Data<VEHICLE>::min_speed;
 			});
 
 			state_machine.add_transition(OpenContactors,  Idle, [&](){
@@ -79,36 +81,44 @@ namespace VCU{
 			state_machine.add_enter_action([&](){
 				actuators.brakes.not_brake();
 				actuators.brakes.disable_emergency_brakes();
-				//TODO: set engine parameters
-				//TODO: send start engine order
+
+				Time::set_timeout(Data<VEHICLE>::brakes_time, [&](){
+					outgoing_orders.speed = Data<VEHICLE>::returning_speed;
+					tcp_handler.send_to_pcu(outgoing_orders.move);
+				});
 			}, Returning);
 
 			state_machine.add_enter_action([&](){
-				//Esto es por si queremos cambiar los parametros (como ir mas lento)
-				//TODO: set engine parameters
+				outgoing_orders.speed = Data<VEHICLE>::crawling_speed;
+				outgoing_orders.direction = VCU::DIRECTION::BACKWARD;
+				tcp_handler.send_to_pcu(outgoing_orders.move);
 			}, Crawling);
 
 			state_machine.add_enter_action([&](){
-				//TODO: send engine stop order
+				tcp_handler.send_to_pcu(outgoing_orders.brake);
 			}, Braking);
 
 			state_machine.add_enter_action([&](){
 				actuators.brakes.enable_emergency_brakes();
 				actuators.brakes.brake();
 			}, OpenContactors);
-
 		}
 
 		void add_on_exit_actions(){
 			state_machine.add_exit_action([&](){
+				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
+
 				if(data.emergency_tape == PinState::ON){
 					ErrorHandler("The vehicle is still in emergency zone after Health&Unload procedure");
-				}else{
-					actuators.brakes.brake();
 				}
 			}, Braking);
 
 			state_machine.add_exit_action([&](){
+				close_contactors_state_machine.ended = false;
+			}, CloseContactors);
+
+			state_machine.add_exit_action([&](){
+				open_contactors_state_machine.ended = false;
 				ended = true;
 			}, OpenContactors);
 
@@ -151,6 +161,7 @@ namespace VCU{
 			register_timed_actions();
 			add_transitions();
 
+			data.unload_state = &state_machine.current_state;
 		}
 	};
 }

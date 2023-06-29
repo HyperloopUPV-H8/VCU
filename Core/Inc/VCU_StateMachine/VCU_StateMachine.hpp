@@ -52,6 +52,7 @@ namespace VCU{
 					tcp_timeout = true;
 				}
 			});
+
 			general_state_machine.add_enter_action([&](){
 					actuators.led_fault.turn_on();
 					actuators.brakes.brake();
@@ -66,6 +67,7 @@ namespace VCU{
 			general_state_machine.add_exit_action([&](){
 				actuators.led_fault.turn_off();
 			}, FAULT);
+
 			general_state_machine.add_exit_action([&](){
 				actuators.led_operational.turn_off();
 			}, OPERATIONAL);
@@ -104,6 +106,7 @@ namespace VCU{
 		OutgoingOrders<VEHICLE>& outgoing_orders;
 		EncoderSensor& encoder;
 		SpecificStateMachine<VEHICLE> specific_state_machine;
+		FaultSpecificStateMachine<VEHICLE> fault_specific_state_machine;
 		StateMachine general_state_machine;
 
 		StackStateOrder<0> healthcheck_and_load;
@@ -111,6 +114,8 @@ namespace VCU{
 		StackStateOrder<0> start_static_lev;
 		StackStateOrder<0> start_dynamic_lev;
 		StackStateOrder<0> start_traction;
+
+		StackStateOrder<0> fault_healthcheck_and_unload;
 
 		bool tcp_timeout = false;
 
@@ -125,28 +130,32 @@ namespace VCU{
 		GeneralStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
 			data(data), actuators(actuators), tcp_handler(tcp), outgoing_orders(outgoing_orders), encoder(encoder),
 			specific_state_machine(data, actuators, tcp, outgoing_orders, encoder),
+			fault_specific_state_machine(data, actuators, tcp, outgoing_orders, encoder),
 
 			healthcheck_and_load((uint16_t)IncomingOrdersIDs::heakthcheck_and_load, SpecificStateMachine<VEHICLE>::enter_health_and_load, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
 			healthcheck_and_unload((uint16_t)IncomingOrdersIDs::healthcheck_and_unload, SpecificStateMachine<VEHICLE>::enter_health_and_unload, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
 			start_static_lev((uint16_t)IncomingOrdersIDs::start_static_lev_demostration, SpecificStateMachine<VEHICLE>::enter_static_lev, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
 			start_dynamic_lev((uint16_t)IncomingOrdersIDs::start_dynamic_lev_demostration, SpecificStateMachine<VEHICLE>::enter_dynamic_lev, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
-			start_traction((uint16_t)IncomingOrdersIDs::start_traction_demostration, SpecificStateMachine<VEHICLE>::enter_traction, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle)
+			start_traction((uint16_t)IncomingOrdersIDs::start_traction_demostration, SpecificStateMachine<VEHICLE>::enter_traction, specific_state_machine.state_machine, SpecificStateMachine<VEHICLE>::SpecificStates::Idle),
+
+			fault_healthcheck_and_unload((uint16_t)IncomingOrdersIDs::healthcheck_and_unload, FaultSpecificStateMachine<VEHICLE>::enter_health_and_unload, specific_state_machine.state_machine, FaultSpecificStateMachine<VEHICLE>::SpecificStates::Idle)
+
 		{
 			init();
 		}
 
 		void add_transitions(){
-			//todo: COMPROBAR que estan todos conectados antes de pasar a operational
 			general_state_machine.add_transition(INITIAL, OPERATIONAL, [&](){
-				bool res = tcp_handler.check_connections();
-				return res;
+				return tcp_handler.check_connections();
 			});
+
 			general_state_machine.add_transition(INITIAL, FAULT, [&](){
 				if(tcp_timeout){
 					ErrorHandler("TCP connections could not be established in time and timed out");
 				}
 				return tcp_timeout;
 			});
+
 			general_state_machine.add_transition(OPERATIONAL, FAULT, [&](){
 				if(not tcp_handler.check_connections() ){
 					ErrorHandler("TCP connections fell");
@@ -164,7 +173,7 @@ namespace VCU{
 //					}
 //				});
 //			}, INITIAL);
-			//Replicado porque el estado incial no ejecuta las enter actions
+			//INFO: Replicado porque el estado incial no ejecuta las enter actions
 			Time::set_timeout(max_tcp_connection_timeout, [&](){
 				if(not (tcp_handler.check_connections())){
 							tcp_timeout = true;
@@ -216,6 +225,8 @@ namespace VCU{
 			add_transitions();
 
 			general_state_machine.add_state_machine(specific_state_machine.state_machine, OPERATIONAL);
+
+		    data.general_state = &general_state_machine.current_state;
 		}
 	};
 }

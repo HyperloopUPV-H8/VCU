@@ -91,8 +91,20 @@ namespace VCU{
 		}
 
 		void add_on_exit_actions(){
+			state_machine.add_exit_action([&](){
+				receiving_data_state_machine.ended = false;
+			}, ReceivingData);
 
 			state_machine.add_exit_action([&](){
+				close_contactors_state_machine.ended = false;
+			}, CloseContactors);
+
+			state_machine.add_exit_action([&](){
+				point_travel_state_machine.ended = false;
+			}, PointTravel);
+
+			state_machine.add_exit_action([&](){
+				open_contactors_state_machine.ended = false;
 				ended = true;
 			}, OpenContactors);
 		}
@@ -116,6 +128,8 @@ namespace VCU{
 			add_transitions();
 			register_timed_actions();
 			add_transitions();
+
+			data.traction_state = &state_machine.current_state;
 		}
 	};
 }

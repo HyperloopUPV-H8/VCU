@@ -7,7 +7,6 @@ namespace VCU{
 
 	template<>
 	class PointTravelStateMachine<VEHICLE>{
-		static constexpr float min_speed = 1.0f;
 
 	public:
 		Data<VEHICLE>& data;
@@ -69,13 +68,14 @@ namespace VCU{
 			});
 
 			state_machine.add_transition(Braking, End, [&](){
-				return data.engine_speed <= min_speed;
+				return data.engine_speed <= Data<VEHICLE>::min_speed or data.tapes_position <= initial_point.position;
 			});
 		}
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
 				initial_point = point_t(data.tapes_position, 0.0f);
+				data.traction_points.push_back(initial_point);
 			}, Idle);
 
 			state_machine.add_enter_action([&](){
@@ -100,6 +100,7 @@ namespace VCU{
 				calculating = false;
 
 				outgoing_orders.speed = calculated_point->speed;
+				outgoing_orders.direction = calculated_direction;
 				tcp_handler.send_to_pcu(outgoing_orders.move);
 
 			}, MovingForward);
@@ -119,21 +120,16 @@ namespace VCU{
 			state_machine.add_enter_action([&](){
 				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
 				ended = true;
+				actuators.brakes.brake();
 			}, End);
 		}
 
 		void add_on_exit_actions(){
-			state_machine.add_exit_action([&](){
-				actuators.brakes.not_brake();
-			}, Braking);
+
 		}
 
 		void register_timed_actions(){
-			state_machine.add_low_precision_cyclic_action([&](){
-				if (data.tapes_position <= initial_point.position && data.engine_speed != 0.0f) {
-					actuators.brakes.brake();
-				}
-			}, (ms)1, Braking);
+
 
 		}
 

@@ -86,8 +86,8 @@ namespace VCU{
 			vcu->udp_handler.send_to_backend(vcu->packets.regulator_packet);
 			vcu->udp_handler.send_to_backend(vcu->packets.pressure_packets);
 			vcu->udp_handler.send_to_backend(vcu->packets.bottle_temperature_packet);
-			vcu->udp_handler.send_to_backend(vcu->packets.reed_packet);
 			vcu->udp_handler.send_to_backend(vcu->packets.environmental_packet);
+			vcu->udp_handler.send_to_backend(vcu->packets.states_packet);
 		}
 
 		static void update_state_machine(){
@@ -95,9 +95,14 @@ namespace VCU{
 		}
 	};
 
-	//Esto hay que modificar Incoming orders para que pueda estar dentro de la clase VCU, aqui fuera no tiene sentido
 	void set_regulator_pressure(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.set_regulator_pressure(VCU_CLASS<BRAKE_VALIDATION>::vcu->incoming_orders.new_pressure);
+		float n_pressure = VCU_CLASS<BRAKE_VALIDATION>::vcu->incoming_orders.new_pressure;
+		if( n_pressure < 0 || n_pressure > 10 ){
+			ProtectionManager::warn("The new value for the regulator is out of range!");
+			return;
+		}
+
+		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.set_regulator_pressure(n_pressure);
 	}
 
 	void brake(){

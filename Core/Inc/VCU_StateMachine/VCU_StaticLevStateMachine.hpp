@@ -85,18 +85,29 @@ namespace VCU{
 
 			state_machine.add_enter_action([&](){
 				actuators.brakes.not_brake();
+			}, CloseContactors);
+
+			state_machine.add_enter_action([&](){
+				actuators.brakes.not_brake();
 				tcp_handler.send_to_lcu(outgoing_orders.take_off_order);
 			}, LevOn);
 
 			state_machine.add_enter_action([&](){
 				tcp_handler.send_to_lcu(outgoing_orders.landing_order);
-				actuators.brakes.brake();
 			}, LevOff);
 
+			state_machine.add_enter_action([&](){
+				actuators.brakes.brake();
+			}, OpenContactors);
 		}
 
 		void add_on_exit_actions(){
 			state_machine.add_exit_action([&](){
+				close_contactors_state_machine.ended = false;
+			}, CloseContactors);
+
+			state_machine.add_exit_action([&](){
+				open_contactors_state_machine.ended = false;
 				ended = true;
 			}, OpenContactors);
 		}
@@ -115,8 +126,9 @@ namespace VCU{
 			add_transitions();
 			register_timed_actions();
 			add_transitions();
-		}
 
+			data.static_lev = &state_machine.current_state;
+		}
 	};
 
 	bool StaticLevStateMachine<VEHICLE>::start_levitation_requested = false;

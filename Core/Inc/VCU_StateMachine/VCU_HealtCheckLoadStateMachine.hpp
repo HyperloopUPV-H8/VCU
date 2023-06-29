@@ -7,8 +7,6 @@ namespace VCU{
 
 	template<>
 	class LoadStateMachine<VEHICLE>{
-		 static constexpr float crawling_speed = 3.0f;
-
 	public:
 		Data<VEHICLE>& data;
 		Actuators<VEHICLE>& actuators;
@@ -55,7 +53,7 @@ namespace VCU{
 			});
 
 			state_machine.add_transition(Pushing, CloseContactors, [&](){
-				//Solo se puede emepezar el crawling si se esta en zona de emergencia
+				//INFO: Solo se puede emepezar el crawling si se esta en zona de emergencia
 				if(crawling_requested && data.emergency_tape == PinState::ON){
 					crawling_requested = false;
 					return true;
@@ -72,7 +70,7 @@ namespace VCU{
 			});
 
 			state_machine.add_transition(Braking,  OpenContactors, [&](){
-				return data.tapes_acceleration == 0; //TODO: Muy importante hacer esto con la IMU
+				return data.engine_speed <= Data<VEHICLE>::min_speed;
 			});
 
 			state_machine.add_transition(OpenContactors, Idle, [&](){
@@ -88,7 +86,8 @@ namespace VCU{
 			}, Pushing);
 
 			state_machine.add_enter_action([&](){
-				outgoing_orders.speed = crawling_speed;
+				outgoing_orders.speed = Data<VEHICLE>::crawling_speed;
+				outgoing_orders.direction = DIRECTION::FORWARD;
 				tcp_handler.send_to_pcu(outgoing_orders.move);
 			}, Crawling);
 
@@ -107,9 +106,6 @@ namespace VCU{
 			state_machine.add_exit_action([&](){
 				if(data.emergency_tape == PinState::ON){
 					ErrorHandler("The vehicle is still in emergency zone after Health&Load procedure");
-				}else{
-					actuators.brakes.brake();
-					 //Siguiendo el FDD kenos debe quedar frenado con pneumatica hasta empezar una demostración
 				}
 			}, Braking);
 
@@ -148,6 +144,8 @@ namespace VCU{
 			add_transitions();
 			register_timed_actions();
 			add_transitions();
+
+			data.load_state = &state_machine.current_state;
 		}
 
 	};

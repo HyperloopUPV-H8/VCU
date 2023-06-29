@@ -32,6 +32,7 @@ namespace VCU{
 			Time::register_low_precision_alarm(100, VCU::VCU_CLASS<VEHICLE>::read_environmental_sensors);
 			Time::register_low_precision_alarm(16, VCU::VCU_CLASS<VEHICLE>::send_to_backend);
 			Time::register_low_precision_alarm(1, VCU::VCU_CLASS<VEHICLE>::update_state_machine);
+			Time::register_low_precision_alarm(1, STLIB::update);
 		}
 	};
 }

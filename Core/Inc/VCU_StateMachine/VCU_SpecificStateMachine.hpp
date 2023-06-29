@@ -173,6 +173,8 @@ namespace VCU{
 			add_transitions();
 			register_timed_actions();
 			add_transitions();
+
+			data.specific_state = &state_machine.current_state;
 		}
 	};
 
