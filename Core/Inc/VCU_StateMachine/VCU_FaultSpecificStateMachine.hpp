@@ -78,5 +78,5 @@ namespace VCU{
 		}
 	};
 
-	bool VCU::SpecificStateMachine<VEHICLE>::healthcheck_and_unload_requested = false;
+	bool VCU::FaultSpecificStateMachine<VEHICLE>::healthcheck_and_unload_requested = false;
 }

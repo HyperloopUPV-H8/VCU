@@ -16,8 +16,8 @@ namespace VCU{
 
 			add_protection(&data.regulator_real_pressure, Boundary<float, OUT_OF_RANGE>(0, 10));
 
-			add_protection(&data.bottle_temperature1, Boundary<float, OUT_OF_RANGE>(0, 50));
-			add_protection(&data.bottle_temperature2, Boundary<float, OUT_OF_RANGE>(0, 50));
+			add_protection(&data.bottle_temperature1, Boundary<double, OUT_OF_RANGE>(0, 50));
+			add_protection(&data.bottle_temperature2, Boundary<double, OUT_OF_RANGE>(0, 50));
 
 			add_protection(&data.enviremont_pressure, Boundary<float, OUT_OF_RANGE>(0, 1.2f));
 			add_protection(&data.enviroment_temperature, Boundary<float, OUT_OF_RANGE>(0, 50));

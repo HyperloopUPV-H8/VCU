@@ -96,7 +96,7 @@ void a_op_func(){
 int main(void){
 //	state_machine_test();
 
-
+//
 //	VCU::VCU_CLASS<VCU::VCU_MODE::VEHICLE> vcu;
 //	VCU::VCU_CLASS<VCU::VCU_MODE::VEHICLE>::vcu = &vcu;
 //	vcu.init();
