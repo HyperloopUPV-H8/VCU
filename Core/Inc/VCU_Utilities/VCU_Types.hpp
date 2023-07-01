@@ -2,14 +2,6 @@
 
 namespace VCU{
 
-	const IPV4 VCU_IP = {"192.168.1.3"};
-	const IPV4 LCU_SLAVE_IP = {"192.168.1.5"};
-	const IPV4 LCU_MASTER_IP = {"192.168.1.4"};
-	const IPV4 BACKEND_IP = {"192.168.0.9"};
-	constexpr uint16_t SERVER_PORT = 50500;
-	constexpr uint16_t CLIENT_PORT = 50501;
-	constexpr uint16_t UDP_PORT = 50400;
-
     enum VALVE_STATE{
         CLOSED,
         OPEN,
@@ -19,6 +11,48 @@ namespace VCU{
     	EXTENDED,
         RETRACTED,
     };
+
+    enum DIRECTION{
+    	FORWARD = 0,
+		BACKWARD = 1,
+    };
+
+    enum ContactorState{
+    	Open,
+		Close,
+    };
+
+    enum LevitaionState{
+   		IDLE,
+   		TAKING_OFF,
+   		STABLE,
+   		STICK_UP,
+   		STICK_DOWN,
+   		LANDING,
+   	};
+
+    struct point_t{
+    	uint32_t position;
+    	float speed;
+
+    	point_t(){
+    		position = 0;
+    		speed = 0.0f;
+    	}
+
+    	point_t(uint32_t position, float speed){
+    		this->position = position;
+    		this->speed = speed;
+    	}
+
+    	point_t& operator=(const point_t& other){
+    		this->position = other.position;
+    		this->speed = other.speed;
+
+    		return *this;
+    	}
+    };
+
 
 }
 

@@ -416,7 +416,7 @@
  * (requires the LWIP_RAW option)
  */
 #if !defined MEMP_NUM_RAW_PCB || defined __DOXYGEN__
-#define MEMP_NUM_RAW_PCB                4
+#define MEMP_NUM_RAW_PCB                10
 #endif
 
 /**
@@ -425,7 +425,7 @@
  * (requires the LWIP_UDP option)
  */
 #if !defined MEMP_NUM_UDP_PCB || defined __DOXYGEN__
-#define MEMP_NUM_UDP_PCB                4
+#define MEMP_NUM_UDP_PCB                5
 #endif
 
 /**

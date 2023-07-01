@@ -1,3 +1,10 @@
+/*
+ * VCU_Brakes.hpp
+ *
+ *  Created on: Jun 1, 2023
+ *      Author: Pablo
+ */
+
 #pragma once
 
 #include "ST-LIB.hpp"
@@ -56,9 +63,7 @@ namespace VCU{
         high_pressure_sensor(Pinout::HIGH_PRESSURE, high_pressure_sensor_slope, high_pressure_sensor_offset, &data.high_pressure1),
         low_pressure_sensor1(Pinout::LOW_PRESSURE1, low_pressure_sensors_slope, low_pressure_sensors_offset, &data.low_pressure1),
         low_pressure_sensor2(Pinout::LOW_PRESSURE2, low_pressure_sensors_slope, low_pressure_sensors_offset, &data.low_pressure2)
-        {
-
-        }
+        {}
 
 
         void read(){
@@ -90,8 +95,6 @@ namespace VCU{
             emergency_tape_enable.turn_off();
         }
 
-
-
         void check_reeds(){
         	reed.read();
         }
@@ -116,12 +119,11 @@ namespace VCU{
     class Brakes<VCU::VCU_MODE::VEHICLE>{
         constexpr static uint16_t ntc_lookup_table_size = 256;
 
-        constexpr static float high_pressure_sensor_slope = 0.006681691;
-        constexpr static float high_pressure_sensor_offset = -43.75;
+        constexpr static float high_pressure_sensor_slope = 113.46153*1.20822977;
+        constexpr static float high_pressure_sensor_offset = (-516.25/11.8)*1.20822977;
 
         constexpr static float low_pressure_sensors_slope = 0.000190905;
         constexpr static float low_pressure_sensors_offset = -1.25;
-      
 
         constexpr static float operating_pressure = 8.0f;
 
@@ -157,7 +159,13 @@ namespace VCU{
                 regulator_actuator(Pinout::REGULATOR_OUT, data.regulator_reference_pressure),
                 regulator_sensor(Pinout::REGULATOR_IN, data.regulator_real_pressure),
 
-                emergency_tape(Pinout::EMERGENCY_TAPE, [&](){emergency_tape.read();}, data.emergency_tape),
+                emergency_tape(Pinout::EMERGENCY_TAPE, [&](){
+            		emergency_tape.read();
+            		//INOF: emergency tape enable a nivel bajo
+            		if (data.emergeny_tape_enable == PinState::OFF) {
+						data.emergency_braking = true;
+					}
+            	}, data.emergency_tape),
                 emergency_tape_enable(Pinout::EMERGENCY_TAPE_ENABLE),
 
                 reed1(Pinout::REED1, &data.reed1),
@@ -189,18 +197,17 @@ namespace VCU{
             void brake(){
                 valve_actuator.close();
                 
-
-                Time::set_timeout(1, [&](){
-                    check_reeds();
-                });
+//                Time::set_timeout(1, [&](){
+//                    check_reeds();
+//                });
             }
 
             void not_brake(){
                 valve_actuator.open();
-
-                Time::set_timeout(1, [&](){
-                    check_reeds();
-                });
+                data.emergency_braking = false;
+//                Time::set_timeout(1, [&](){
+//                    check_reeds();
+//                });
             }
 
             void disable_emergency_brakes(){
@@ -228,6 +235,5 @@ namespace VCU{
                 regulator_actuator.set_pressure(operating_pressure);
                 read();
             }
-
     };
 }

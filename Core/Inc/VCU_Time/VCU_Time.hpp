@@ -9,6 +9,7 @@
 namespace VCU{
 
 	template<VCU_MODE> class CyclicActions;
+
 	template<> class CyclicActions<BRAKE_VALIDATION>{
 	public:
 		Brakes<VCU_MODE::BRAKE_VALIDATION>& brakes;
@@ -17,6 +18,21 @@ namespace VCU{
 		static void register_cyclic_actions(){
 			Time::register_low_precision_alarm(1, VCU::VCU_CLASS<BRAKE_VALIDATION>::read_brakes_sensors);
 			Time::register_low_precision_alarm(16, VCU::VCU_CLASS<BRAKE_VALIDATION>::send_to_backend);
+			Time::register_low_precision_alarm(1, VCU::VCU_CLASS<BRAKE_VALIDATION>::update_state_machine);
+		}
+	};
+
+	template<> class CyclicActions<VEHICLE>{
+	public:
+		Brakes<VCU_MODE::VEHICLE>& brakes;
+		CyclicActions(Brakes<VCU_MODE::VEHICLE>& brakes) : brakes(brakes){}
+
+		static void register_cyclic_actions(){
+			Time::register_low_precision_alarm(1, VCU::VCU_CLASS<VEHICLE>::read_brakes_sensors);
+			Time::register_low_precision_alarm(100, VCU::VCU_CLASS<VEHICLE>::read_environmental_sensors);
+			Time::register_low_precision_alarm(16, VCU::VCU_CLASS<VEHICLE>::send_to_backend);
+			Time::register_low_precision_alarm(1, VCU::VCU_CLASS<VEHICLE>::update_state_machine);
+			Time::register_low_precision_alarm(1, STLIB::update);
 		}
 	};
 }

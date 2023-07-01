@@ -15,6 +15,5 @@ namespace VCU{
         void read(){
             reed.read();
         }
-
     };
 }
