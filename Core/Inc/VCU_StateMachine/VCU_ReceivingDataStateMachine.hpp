@@ -83,6 +83,8 @@ namespace VCU{
 
 	vector<point_t> ReceivingDataStateMachine<VEHICLE>::traction_points = {};
 	bool ReceivingDataStateMachine<VEHICLE>::last_data_packet_requested = false;
+	uint32_t ReceivingDataStateMachine<VEHICLE>::received_data_distance = 0;
+	float ReceivingDataStateMachine<VEHICLE>::received_data_speed = 0.0f;
 }
 
 

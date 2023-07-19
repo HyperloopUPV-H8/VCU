@@ -35,7 +35,7 @@ namespace VCU{
 		StackOrder<0> take_off_order;
 		StackOrder<0> landing_order;
 
-		StackOrder<4, float, DIRECTION> move;
+		StackOrder<4, float, VCU::DIRECTION> move;
 		StackOrder<0> brake;
 		StackOrder<0> turn_off;
 
@@ -43,7 +43,7 @@ namespace VCU{
 		StackOrder<0> open_contactors;
 
 		float speed = 0.0f;
-		DIRECTION direction = DIRECTION::FORWARD;
+		VCU::DIRECTION direction = VCU::DIRECTION::FORWARD;
 
 		OutgoingOrders() :
 			take_off_order((uint16_t)LevitationOrdes::TAKE_OFF),
