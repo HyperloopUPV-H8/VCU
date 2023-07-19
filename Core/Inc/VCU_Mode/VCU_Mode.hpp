@@ -6,5 +6,6 @@ namespace VCU{
         POSITION_VALIDATION,
         VEHICLE,
 		SHUTUP_TESTING,
+		SEC_TEST,
     };
 }

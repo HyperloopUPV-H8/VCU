@@ -32,6 +32,15 @@ namespace VCU{
 		start_crawling = 231,
 		traction_data = 233,
 		traction_end_data = 234,
+
+		start_levitating = 300,
+		stop_levitating = 301,
+
+		stop_traction = 609,
+
+		open_contactors = 902,
+		close_contactors = 903
+
 	};
 
 
@@ -44,6 +53,13 @@ namespace VCU{
 	void unbrake();
 	void disable_emergency_tape();
 	void enable_emergency_tape();
+
+	void close_contactors();
+	void open_contactors();
+	void start_levitating();
+	void stop_levitating();
+	void stop_traction();
+
 
 	template<VCU_MODE> class IncomingOrders;
 
@@ -68,6 +84,8 @@ namespace VCU{
 
 	template<>
 	class IncomingOrders<VEHICLE>{
+	public:
+
 		StackOrder<0> hardware_reset_order;
 		StackOrder<4,float> set_regulator_pressure_order;
 		StackOrder<0> brake_order;
@@ -75,7 +93,8 @@ namespace VCU{
 		StackOrder<0> disable_emergency_tape_order;
 		StackOrder<0> enable_emergency_tape_order;
 
-	public:
+
+
 		float new_pressure = 0;
 
 		IncomingOrders(Data<VEHICLE>& data) :
@@ -84,7 +103,8 @@ namespace VCU{
 			brake_order((uint16_t)IncomingOrdersIDs::brake_order, brake),
 			unbrake_order((uint16_t)IncomingOrdersIDs::unbrake_order, unbrake),
 			disable_emergency_tape_order((uint16_t)IncomingOrdersIDs::disable_emergency_tape_order, disable_emergency_tape),
-			enable_emergency_tape_order((uint16_t)IncomingOrdersIDs::enable_emergency_tape_order,enable_emergency_tape)
-		{}
+			enable_emergency_tape_order((uint16_t)IncomingOrdersIDs::enable_emergency_tape_order, enable_emergency_tape)
+		{
+		}
 	};
 }

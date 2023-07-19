@@ -210,6 +210,10 @@ namespace VCU{
 //                });
             }
 
+            void set_regulator_pressure(float new_pressure){
+                regulator_actuator.set_pressure(new_pressure);
+            }
+
             void disable_emergency_brakes(){
                 emergency_tape_enable.turn_on();
                 data.emergeny_tape_enable = PinState::ON;

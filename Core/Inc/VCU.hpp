@@ -46,7 +46,6 @@ namespace VCU{
 			vcu->general_state_machine.general_state_machine.check_transitions();
 		}
 	};
-
 	template<> class VCU_CLASS<VCU_MODE::VEHICLE>{
 	public:
 		static VCU_CLASS* vcu;
@@ -60,11 +59,11 @@ namespace VCU{
 		OutgoingOrders<VCU_MODE::VEHICLE> outgoing_orders;
 		Packets<VCU_MODE::VEHICLE> packets;
 		EncoderSensor encoder;
-		GeneralStateMachine<VCU_MODE::VEHICLE> state_machine_handler;
+		GeneralStateMachine<VCU_MODE::SEC_TEST> state_machine_handler;
 
 		VCU_CLASS():data(), actuators(data), environmental_sensors(data), tcp_handler(), udp_handler(), incoming_orders(data), packets(data),
 					encoder(Pinout::TAPE1, Pinout::TAPE2, &data.tapes_position, &data.tapes_direction, &data.tapes_speed, &data.tapes_acceleration)
-					,state_machine_handler(data, actuators, tcp_handler, outgoing_orders, encoder)
+					,state_machine_handler(data, actuators, tcp_handler, incoming_orders)
 				{}
 
 		void init(){
@@ -96,32 +95,33 @@ namespace VCU{
 	};
 
 	void set_regulator_pressure(){
-		float n_pressure = VCU_CLASS<BRAKE_VALIDATION>::vcu->incoming_orders.new_pressure;
+		float n_pressure = VCU_CLASS<VEHICLE>::vcu->incoming_orders.new_pressure;
 		if( n_pressure < 0 || n_pressure > 10 ){
 			ProtectionManager::warn("The new value for the regulator is out of range!");
 			return;
 		}
 
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.set_regulator_pressure(n_pressure);
+		VCU_CLASS<VEHICLE>::vcu->actuators.brakes.set_regulator_pressure(n_pressure);
 	}
 
 	void brake(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.brake();
+		VCU_CLASS<VEHICLE>::vcu->actuators.brakes.brake();
 	}
 
 	void unbrake(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.not_brake();
+		VCU_CLASS<VEHICLE>::vcu->actuators.brakes.not_brake();
 	}
 
 	void disable_emergency_tape(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.disable_emergency_brakes();
+		VCU_CLASS<VEHICLE>::vcu->actuators.brakes.disable_emergency_brakes();
 	}
 
 	void enable_emergency_tape(){
-		VCU_CLASS<BRAKE_VALIDATION>::vcu->actuators.brakes.enable_emergency_brakes();
+		VCU_CLASS<VEHICLE>::vcu->actuators.brakes.enable_emergency_brakes();
 	}
-
 }
+
+
 
 VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION>* VCU::VCU_CLASS<VCU::VCU_MODE::BRAKE_VALIDATION>::vcu = nullptr;
 VCU::VCU_CLASS<VCU::VCU_MODE::VEHICLE>* VCU::VCU_CLASS<VCU::VCU_MODE::VEHICLE>::vcu = nullptr;

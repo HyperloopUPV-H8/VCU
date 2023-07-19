@@ -91,5 +91,13 @@ namespace VCU{
 			PCU_CONNECTION.is_connected()
 			;
         }
+
+        void reconnect_all(){
+			if(not OBCCU_CONNECTION.is_connected()) OBCCU_CONNECTION.reconnect();
+			if(not BMSL_CONNECTION.is_connected()) BMSL_CONNECTION.reconnect();
+			if(not LCU_MASTER_CONNECTION.is_connected()) LCU_MASTER_CONNECTION.reconnect();
+			if(not PCU_CONNECTION.is_connected()) PCU_CONNECTION.reconnect();
+		}
+
 	};
 }

@@ -45,18 +45,18 @@ namespace VCU{
         void init(){
         	BACKEND_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, BACKEND_IP, UDP_PORT);
         	BACKEND_CONNECTION.reconnect();
-
-        	OBCCU_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, OBCCU_IP, UDP_PORT);
-        	OBCCU_CONNECTION.reconnect();
-
-        	BMSL_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, BMSL_IP, UDP_PORT);
-        	BMSL_CONNECTION.reconnect();
-
-        	LCU_MASTER_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, LCU_MASTER_IP, UDP_PORT);
-			LCU_MASTER_CONNECTION.reconnect();
-
-        	PCU_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, PCU_IP, UDP_PORT);
-        	PCU_CONNECTION.reconnect();
+//
+//        	OBCCU_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, OBCCU_IP, UDP_PORT);
+//        	OBCCU_CONNECTION.reconnect();
+//
+//        	BMSL_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, BMSL_IP, UDP_PORT);
+//        	BMSL_CONNECTION.reconnect();
+//
+//        	LCU_MASTER_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, LCU_MASTER_IP, UDP_PORT);
+//			LCU_MASTER_CONNECTION.reconnect();
+//
+//        	PCU_CONNECTION = DatagramSocket(VCU_IP, UDP_PORT, PCU_IP, UDP_PORT);
+//        	PCU_CONNECTION.reconnect();
 
 
         }
