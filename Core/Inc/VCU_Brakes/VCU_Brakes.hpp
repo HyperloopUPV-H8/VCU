@@ -125,7 +125,7 @@ namespace VCU{
         constexpr static float low_pressure_sensors_slope = 0.000190905;
         constexpr static float low_pressure_sensors_offset = -1.25;
 
-        constexpr static float operating_pressure = 8.0f;
+        constexpr static float operating_pressure = 0.0f;
 
         private:
             Data<VCU::VCU_MODE::VEHICLE>& data;
@@ -162,8 +162,9 @@ namespace VCU{
                 emergency_tape(Pinout::EMERGENCY_TAPE, [&](){
             		emergency_tape.read();
             		//INOF: emergency tape enable a nivel bajo
-            		if (data.emergeny_tape_enable == PinState::OFF) {
+            		if (data.emergeny_tape_enable == PinState::OFF ){//&& *data.general_state == 1) {// Estado 1 es operational
 						data.emergency_braking = true;
+						ErrorHandler("Emergency Tape Detected!");
 					}
             	}, data.emergency_tape),
                 emergency_tape_enable(Pinout::EMERGENCY_TAPE_ENABLE),
@@ -197,17 +198,17 @@ namespace VCU{
             void brake(){
                 valve_actuator.close();
                 
-//                Time::set_timeout(1, [&](){
-//                    check_reeds();
-//                });
+                Time::set_timeout(1, [&](){
+                    check_reeds();
+                });
             }
 
             void not_brake(){
                 valve_actuator.open();
                 data.emergency_braking = false;
-//                Time::set_timeout(1, [&](){
-//                    check_reeds();
-//                });
+                Time::set_timeout(1, [&](){
+                    check_reeds();
+                });
             }
 
             void set_regulator_pressure(float new_pressure){
@@ -227,12 +228,13 @@ namespace VCU{
             void check_reeds(){
                 reed1.read();
                 reed2.read();
-                reed3.read();
-                reed4.read();
-                data.reeds_ok = ((data.reed1 == data.reed2) == data.reed3) == data.reed4;
+//                reed3.read();
+//                reed4.read();
+                data.reeds_ok = (data.reed1 == data.reed2);
             }
 
             void init(){
+            	regulator_actuator.init();
                 read();
                 enable_emergency_brakes();
                 brake();

@@ -99,26 +99,26 @@ namespace VCU{
 			state_machine.add_enter_action([&](){
 				calculating = false;
 
-				outgoing_orders.speed = calculated_point->speed;
-				outgoing_orders.direction = calculated_direction;
-				tcp_handler.send_to_pcu(outgoing_orders.move);
+//				outgoing_orders.speed = calculated_point->speed;
+//				outgoing_orders.direction = calculated_direction;
+//				tcp_handler.send_to_pcu(outgoing_orders.move);
 
 			}, MovingForward);
 
 			state_machine.add_enter_action([&](){
 				calculating = false;
 
-				outgoing_orders.speed = calculated_point->speed;
-				tcp_handler.send_to_pcu(outgoing_orders.move);
+//				outgoing_orders.speed = calculated_point->speed;
+//				tcp_handler.send_to_pcu(outgoing_orders.move);
 
 			}, MovingBackward);
 
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_pcu(outgoing_orders.brake);
+//				tcp_handler.send_to_pcu(outgoing_orders.brake);
 			}, Braking);
 
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
+//				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
 				ended = true;
 				actuators.brakes.brake();
 			}, End);

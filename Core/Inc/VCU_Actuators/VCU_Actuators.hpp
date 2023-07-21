@@ -29,13 +29,11 @@ namespace VCU{
 	class Actuators<VEHICLE>{
 	public:
 		Brakes<VEHICLE> brakes;
-		LEDSActuator vehicle_leds;
-    	DigitalOutput led_sleep, led_flash, led_fault, led_operational, led_can;
+    	DigitalOutput led_sleep, led_flash, led_fault, led_operational, led_can, led_r, led_g, led_b;
     	Actuators(Data<VEHICLE>& data) :
     		brakes(data),
-			vehicle_leds(Pinout::LEDR, Pinout::LEDG, Pinout::LEDB),
 			led_sleep(Pinout::SLEEP_LED), led_flash(Pinout::FLASH_LED), led_fault(Pinout::FAULT_LED),
-			led_operational(Pinout::OPERATIONAL_LED), led_can(Pinout::CAN_LED)
+			led_operational(Pinout::OPERATIONAL_LED), led_can(Pinout::CAN_LED), led_r(Pinout::LEDR), led_g(Pinout::LEDG),led_b(Pinout::LEDB)
     	{}
 	};
 }

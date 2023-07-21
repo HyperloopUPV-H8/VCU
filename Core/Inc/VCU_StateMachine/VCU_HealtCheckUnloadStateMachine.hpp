@@ -83,19 +83,19 @@ namespace VCU{
 				actuators.brakes.disable_emergency_brakes();
 
 				Time::set_timeout(Data<VEHICLE>::brakes_time, [&](){
-					outgoing_orders.speed = Data<VEHICLE>::returning_speed;
-					tcp_handler.send_to_pcu(outgoing_orders.move);
+//					outgoing_orders.speed = Data<VEHICLE>::returning_speed;
+//					tcp_handler.send_to_pcu(outgoing_orders.move);
 				});
 			}, Returning);
 
 			state_machine.add_enter_action([&](){
-				outgoing_orders.speed = Data<VEHICLE>::crawling_speed;
-				outgoing_orders.direction = VCU::DIRECTION::BACKWARD;
-				tcp_handler.send_to_pcu(outgoing_orders.move);
+//				outgoing_orders.speed = Data<VEHICLE>::crawling_speed;
+//				outgoing_orders.direction = VCU::DIRECTION::BACKWARD;
+//				tcp_handler.send_to_pcu(outgoing_orders.move);
 			}, Crawling);
 
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_pcu(outgoing_orders.brake);
+//				tcp_handler.send_to_pcu(outgoing_orders.brake);
 			}, Braking);
 
 			state_machine.add_enter_action([&](){
@@ -106,7 +106,7 @@ namespace VCU{
 
 		void add_on_exit_actions(){
 			state_machine.add_exit_action([&](){
-				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
+//				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
 
 				if(data.emergency_tape == PinState::ON){
 					ErrorHandler("The vehicle is still in emergency zone after Health&Unload procedure");

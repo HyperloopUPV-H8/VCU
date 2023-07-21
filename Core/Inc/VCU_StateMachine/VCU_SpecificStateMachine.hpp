@@ -187,11 +187,11 @@ namespace VCU{
 	template<>
 	class SpecificStateMachine<SEC_TEST>{
 	public:
-		enum VoltageStates{
+		enum VoltageStates : uint8_t{
 			NOT_HV,
 			HV
 		};
-		enum SpecificStates{
+		enum SpecificStates : uint8_t{
 			IDLE,
 			LEVITATING,
 			RUNNING,
@@ -207,9 +207,11 @@ namespace VCU{
 		TCP<VEHICLE>& tcp_handler;
 		IncomingOrders<VEHICLE>& incoming_orders;
 		Actuators<VEHICLE>& actuators;
-		SpecificStateMachine(double& position, TCP<VEHICLE>& tcp_handler, IncomingOrders<VEHICLE>& incoming_orders, Actuators<VEHICLE>& actuators) : voltage_state_machine(NOT_HV), specific_state_machine(IDLE),real_position(position),tcp_handler(tcp_handler), incoming_orders(incoming_orders),
+		SpecificStateMachine(Data<VEHICLE>& data, double& position, TCP<VEHICLE>& tcp_handler, IncomingOrders<VEHICLE>& incoming_orders, Actuators<VEHICLE>& actuators) : voltage_state_machine(NOT_HV), specific_state_machine(IDLE),real_position(position),tcp_handler(tcp_handler), incoming_orders(incoming_orders),
 				actuators(actuators){
 			init();
+			data.specific_state = &specific_state_machine.current_state;
+			data.voltage_state = &voltage_state_machine.current_state;
 		}
 		void init(){
 			voltage_state_machine.add_state(HV);
@@ -220,9 +222,9 @@ namespace VCU{
 				return not contactor_state;
 			});
 			voltage_state_machine.add_exit_action([&](){
-//				tcp_handler.LCU_MASTER_CONNECTION.send_order(incoming_orders.stop_levitation_order);
-//				tcp_handler.PCU_CONNECTION.send_order(incoming_orders.stop_traction_order);
-//				tcp_handler.OBCCU_CONNECTION.send_order(incoming_orders.open_contactors_order);
+				tcp_handler.LCU_MASTER_CONNECTION.send_order(incoming_orders.stop_levitation_order);
+				tcp_handler.PCU_CONNECTION.send_order(incoming_orders.stop_traction_order);
+				tcp_handler.OBCCU_CONNECTION.send_order(incoming_orders.open_contactors_order);
 			},HV);
 			specific_state_machine.add_state(LEVITATING);
 			specific_state_machine.add_state(RUNNING);
@@ -237,9 +239,9 @@ namespace VCU{
 				return real_position >= desired_position;
 			});
 			specific_state_machine.add_enter_action([&](){
-//				tcp_handler.LCU_MASTER_CONNECTION.send_order(incoming_orders.stop_levitation_order);
-//				tcp_handler.PCU_CONNECTION.send_order(incoming_orders.stop_traction_order);
-//				tcp_handler.OBCCU_CONNECTION.send_order(incoming_orders.open_contactors_order);
+				tcp_handler.LCU_MASTER_CONNECTION.send_order(incoming_orders.stop_levitation_order);
+				tcp_handler.PCU_CONNECTION.send_order(incoming_orders.stop_traction_order);
+				tcp_handler.OBCCU_CONNECTION.send_order(incoming_orders.open_contactors_order);
 				actuators.brakes.brake();
 			}, END);
 			specific_state_machine.add_state_machine(specific_state_machine, HV);

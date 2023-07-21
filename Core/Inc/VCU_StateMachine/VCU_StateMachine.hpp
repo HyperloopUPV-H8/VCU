@@ -124,9 +124,9 @@ namespace VCU{
 			static constexpr uint16_t max_tcp_connection_timeout = 65000; //ms //TODO: arreglar
 
 			enum States{
-				INITIAL,
-				OPERATIONAL,
-				FAULT
+				INITIAL = 0,
+				OPERATIONAL = 1,
+				FAULT = 2
 			};
 
 			GeneralStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators, TCP<VEHICLE>& tcp, OutgoingOrders<VEHICLE>& outgoing_orders, EncoderSensor& encoder) :
@@ -186,11 +186,17 @@ namespace VCU{
 					actuators.led_fault.turn_on();
 					actuators.brakes.brake();
 					actuators.brakes.enable_emergency_brakes();
+					actuators.led_g.turn_off();
+					actuators.led_b.turn_off();
+					actuators.led_r.turn_on();
 				}, FAULT);
 
 				general_state_machine.add_enter_action([&](){
 					actuators.led_operational.turn_on();
 					actuators.brakes.enable_emergency_brakes();
+					actuators.led_g.turn_on();
+					actuators.led_b.turn_off();
+					actuators.led_r.turn_off();
 				}, OPERATIONAL);
 			}
 
@@ -204,11 +210,14 @@ namespace VCU{
 				}, OPERATIONAL);
 				general_state_machine.add_exit_action([&](){
 					actuators.led_operational.turn_off();
+					actuators.led_g.turn_off();
+					actuators.led_b.turn_off();
+					actuators.led_r.turn_off();
 				}, INITIAL);
 			}
 
 			void register_timed_actions(){
-				general_state_machine.add_low_precision_cyclic_action([&](){actuators.led_operational.toggle();}, (ms)150, INITIAL);
+				general_state_machine.add_low_precision_cyclic_action([&](){actuators.led_operational.toggle(); actuators.led_g.toggle();}, (ms)150, INITIAL);
 				general_state_machine.add_low_precision_cyclic_action(ProtectionManager::check_protections, (ms)1, OPERATIONAL);
 			}
 
@@ -242,11 +251,12 @@ namespace VCU{
 		bool tcp_timeout = false;
 		static constexpr uint16_t max_tcp_connection_timeout = 25000;
 		GeneralStateMachine(Data<VEHICLE>& data, Actuators<VEHICLE>& actuators , TCP<VEHICLE>& tcp_handler, IncomingOrders<VEHICLE>& incoming_orders) : actuators(actuators), tcp_handler(tcp_handler),
-				specific_state_machine_handler(data.tapes_position, tcp_handler, incoming_orders,actuators)
+				specific_state_machine_handler(data, data.tapes_position, tcp_handler, incoming_orders,actuators)
 		{
 			init();
+			data.general_state = &general_state_machine.current_state;
 		}
-		enum States{
+		enum States : uint8_t{
 			INITIAL,
 			OPERATIONAL,
 			FAULT
@@ -262,6 +272,7 @@ namespace VCU{
 			add_transitions();
 			register_timed_actions();
 			general_state_machine.add_state_machine(specific_state_machine_handler.voltage_state_machine, OPERATIONAL);
+
 		}
 		void add_on_enter_actions(){
 				general_state_machine.add_enter_action([&](){
@@ -320,6 +331,13 @@ namespace VCU{
 				tcp_handler.reconnect_all();
 			}, (ms)150);
 			general_state_machine.add_low_precision_cyclic_action(ProtectionManager::check_protections,(ms) 1, OPERATIONAL);
+			general_state_machine.add_low_precision_cyclic_action([&](){
+				tcp_handler.send_to_bsml(ProtectionManager::fault_order);
+				tcp_handler.send_to_lcu(ProtectionManager::fault_order);
+				tcp_handler.send_to_obccu(ProtectionManager::fault_order);
+				tcp_handler.send_to_pcu(ProtectionManager::fault_order);
+
+			}, (ms)10, FAULT);
 		}
 
 

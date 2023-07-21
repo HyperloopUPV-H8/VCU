@@ -86,18 +86,18 @@ namespace VCU{
 			}, Pushing);
 
 			state_machine.add_enter_action([&](){
-				outgoing_orders.speed = Data<VEHICLE>::crawling_speed;
-				outgoing_orders.direction = DIRECTION::FORWARD;
-				tcp_handler.send_to_pcu(outgoing_orders.move);
+//				outgoing_orders.speed = Data<VEHICLE>::crawling_speed;
+//				outgoing_orders.direction = DIRECTION::FORWARD;
+//				tcp_handler.send_to_pcu(outgoing_orders.move);
 			}, Crawling);
 
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_pcu(outgoing_orders.brake);
+//				tcp_handler.send_to_pcu(outgoing_orders.brake);
 				actuators.brakes.enable_emergency_brakes();
 			}, Braking);
 
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
+//				tcp_handler.send_to_pcu(outgoing_orders.turn_off);
 				actuators.brakes.brake();
 			}, OpenContactors);
 		}

@@ -22,8 +22,8 @@ namespace VCU{
 //			add_protection(&data.enviremont_pressure, Boundary<float, OUT_OF_RANGE>(0, 1.2f));
 //			add_protection(&data.enviroment_temperature, Boundary<float, OUT_OF_RANGE>(0, 50));
 //
-////			add_protection(&data.reeds_ok, Boundary<bool, NOT_EQUALS>(true));
-//			add_protection(&data.emergency_braking, Boundary<bool, EQUALS>(true));
+			add_protection(&data.reeds_ok, Boundary<bool, NOT_EQUALS>(true));
+			add_protection(&data.emergency_braking, Boundary<bool, EQUALS>(true));
 		}
 	};
 

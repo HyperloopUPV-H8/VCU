@@ -7,7 +7,7 @@
 #include "VCU_Time/VCU_Time.hpp"
 
 int main(void){
-	for(uint32_t i = 0; i < 5000000; i++){
+	for(uint32_t i = 0; i < 10000000; i++){
 		__NOP();
 	}
 
@@ -22,8 +22,17 @@ int main(void){
 	vcu.init();
 	VCU::CyclicActions<VCU::VCU_MODE::VEHICLE>::register_cyclic_actions();
 
+	GPIO_PinState a = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_1);
 	while(1){
 //		STLIB::update();
+		vcu.read_encoder();
+		if(ErrorHandlerModel::error_triggered != 0){
+			vcu.actuators.led_can.turn_on();
+			vcu.actuators.led_fault.turn_on();
+			vcu.actuators.led_flash.turn_on();
+			vcu.actuators.led_operational.turn_on();
+			vcu.actuators.led_sleep.turn_on();
+		}
 	}
 }
 

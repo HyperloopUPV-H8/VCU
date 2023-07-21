@@ -97,7 +97,7 @@ namespace VCU{
 			}, CloseContactors);
 
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_lcu(outgoing_orders.take_off_order);
+//				tcp_handler.send_to_lcu(outgoing_orders.take_off_order);
 
 				Time::set_timeout(levitation_timeout, [&](){
 					if(state_machine.current_state == TakeOff && data.levitation_state != STABLE){
@@ -107,7 +107,7 @@ namespace VCU{
 			}, TakeOff);
 
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_lcu(outgoing_orders.landing_order);
+//				tcp_handler.send_to_lcu(outgoing_orders.landing_order);
 
 				Time::set_timeout(landing_timeout, [&](){
 					if(state_machine.current_state == Landing && data.levitation_state != IDLE){

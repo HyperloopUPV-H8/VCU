@@ -40,7 +40,7 @@ namespace VCU{
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_obccu(outgoing_orders.close_contactors);
+//				tcp_handler.send_to_obccu(outgoing_orders.close_contactors);
 			}, RequestClose);
 
 		}
@@ -98,7 +98,7 @@ namespace VCU{
 
 		void add_on_enter_actions(){
 			state_machine.add_enter_action([&](){
-				tcp_handler.send_to_obccu(outgoing_orders.open_contactors);
+//				tcp_handler.send_to_obccu(outgoing_orders.open_contactors);
 			}, RequestOpen);
 		}
 
