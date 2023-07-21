@@ -74,11 +74,16 @@ namespace VCU{
         uint8_t* general_state;
         uint8_t* specific_state;
         uint8_t* voltage_state;
+
         uint8_t* load_state;
         uint8_t* unload_state;
         uint8_t* traction_state;
         uint8_t* dynamic_lev;
         uint8_t* static_lev;
+
+        uint8_t n_g = 0;
+        uint8_t n_s = 0;
+        uint8_t n_v = 0;
 
         //VEHICLE Data
         LevitaionState levitation_state = IDLE;

@@ -22,16 +22,16 @@ int main(void){
 	vcu.init();
 	VCU::CyclicActions<VCU::VCU_MODE::VEHICLE>::register_cyclic_actions();
 
-	GPIO_PinState a = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_1);
 	while(1){
 //		STLIB::update();
 		vcu.read_encoder();
+		vcu.data.n_g = vcu.state_machine_handler.general_state_machine.current_state;
+		vcu.data.n_s = vcu.state_machine_handler.specific_state_machine_handler.specific_state_machine.current_state;
+		vcu.data.n_v = vcu.state_machine_handler.specific_state_machine_handler.voltage_state_machine.current_state;
+
 		if(ErrorHandlerModel::error_triggered != 0){
-			vcu.actuators.led_can.turn_on();
-			vcu.actuators.led_fault.turn_on();
-			vcu.actuators.led_flash.turn_on();
-			vcu.actuators.led_operational.turn_on();
 			vcu.actuators.led_sleep.turn_on();
+
 		}
 	}
 }

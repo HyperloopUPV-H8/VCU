@@ -72,6 +72,7 @@ namespace VCU{
 			actuators.brakes.init();
 			tcp_handler.init();
 			udp_handler.init();
+			packets.init();
 		}
 
 		static void read_brakes_sensors(){
@@ -146,72 +147,83 @@ namespace VCU{
 			else ErrorHandler("OBCCU is not connected to VCU");
 		}
 
-		void open_contactors(){
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.OBCCU_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.OBCCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.open_contactors_order);
-				VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.contactor_state = false;
-			}
-			else ErrorHandler("OBCCU is not connected to VCU");
+	void open_contactors(){
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.OBCCU_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.OBCCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.open_contactors_order);
+			VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.contactor_state = false;
 		}
+		else ErrorHandler("OBCCU is not connected to VCU");
+	}
 
-		void start_vertical_levitation(){
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.start_vertical_levitation_order);
-				VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_levitating = true;
-			}
-			else ErrorHandler("LCU is not connected to VCU");
+	void test_current_control(){
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.test_current_control_order);
+			VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_levitating = true;
 		}
+		else ErrorHandler("LCU is not connected to VCU");
+	}
 
-		void start_lateral_levitation(){
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected())
-			VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.start_lateral_levitation_order);
-			else ErrorHandler("LCU is not connected to VCU");
+	void start_vertical_levitation(){
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.start_vertical_levitation_order);
+			VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_levitating = true;
 		}
+		else ErrorHandler("LCU is not connected to VCU");
+	}
 
-		void start_traction(){
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.start_traction_order);
-				VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_running = true;
-			}
-			else ErrorHandler("PCU is not connected to VCU");
-		}
+	void start_lateral_levitation(){
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected())
+		VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.start_lateral_levitation_order);
+		else ErrorHandler("LCU is not connected to VCU");
+	}
 
-		void stop_levitation(){
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.stop_levitation_order);
-				VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_levitating = false;
+	void start_traction(){
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.is_connected()){
+			if(VCU_CLASS<VEHICLE>::vcu->data.valve_state == VALVE_STATE::CLOSED || VCU_CLASS<VEHICLE>::vcu->data.emergency_braking){
+				ErrorHandler("Cannot start traction while braking");
 			}
-			else ErrorHandler("LCU is not connected to VCU");
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.start_traction_order);
+			VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_running = true;
 		}
+		else ErrorHandler("PCU is not connected to VCU");
+	}
 
-		void stop_traction(){
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.stop_traction_order);
-				VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_running = false;
-				VCU_CLASS<VEHICLE>::vcu->actuators.brakes.brake();
-			}
-			else ErrorHandler("PCU is not connected to VCU");
+	void stop_levitation(){
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.stop_levitation_order);
+			VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_levitating = false;
 		}
+		else ErrorHandler("LCU is not connected to VCU");
+	}
 
-		void emergency_stop(){
-			ErrorHandler("Emergency stop");
+	void stop_traction(){
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->incoming_orders.stop_traction_order);
+			VCU_CLASS<VEHICLE>::vcu->state_machine_handler.specific_state_machine_handler.is_running = false;
+			VCU_CLASS<VEHICLE>::vcu->actuators.brakes.brake();
 		}
+		else ErrorHandler("PCU is not connected to VCU");
+	}
 
-		void vehicle_reset(){
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->outgoing_orders.lcu_reset_all);
-			}
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->outgoing_orders.pcu_reset);
-			}
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.OBCCU_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.OBCCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->outgoing_orders.obccu_reset);
-			}
-			if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.BMSL_CONNECTION.is_connected()){
-				VCU_CLASS<VEHICLE>::vcu->tcp_handler.BMSL_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->outgoing_orders.bmsl_reset);
-			}
-			HAL_NVIC_SystemReset();
+	void emergency_stop(){
+		ErrorHandler("Emergency stop");
+	}
+
+	void vehicle_reset(){
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.LCU_MASTER_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->outgoing_orders.lcu_reset_all);
 		}
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.PCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->outgoing_orders.pcu_reset);
+		}
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.OBCCU_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.OBCCU_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->outgoing_orders.obccu_reset);
+		}
+		if(VCU_CLASS<VEHICLE>::vcu->tcp_handler.BMSL_CONNECTION.is_connected()){
+			VCU_CLASS<VEHICLE>::vcu->tcp_handler.BMSL_CONNECTION.send_order(VCU_CLASS<VEHICLE>::vcu->outgoing_orders.bmsl_reset);
+		}
+		HAL_NVIC_SystemReset();
+	}
 }
 
 

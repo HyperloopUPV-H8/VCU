@@ -39,6 +39,8 @@ namespace VCU{
 		start_levitating = 300,
 		stop_levitating = 301,
 
+		test_current_control = 335,
+
 		stop_traction = 609,
 
 		open_contactors = 902,
@@ -59,6 +61,7 @@ namespace VCU{
 
 	void close_contactors();
 	void open_contactors();
+	void test_current_control();
 	void start_vertical_levitation();
 	void start_lateral_levitation();
 	void start_traction();
@@ -112,6 +115,7 @@ namespace VCU{
 		StackOrder<0> stop_traction_order;
 		StackOrder<0> stop_levitation_order;
 		StackOrder<0> emergency_stop_order;
+		StackOrder<5, COIL_ID, float> test_current_control_order;
 
 		StackOrder<0> vehicle_reset_order;
 
@@ -122,6 +126,10 @@ namespace VCU{
 		float traction_vdc = 0;
 		TractionDirection traction_direction = TractionDirection::FORWARD;
 		bool dummy = false;
+
+		COIL_ID temp_coil_id = COIL_ID::EMS_1;
+		float temp_coil_value = 0.0f;
+
 
 		IncomingOrders(Data<VEHICLE>& data) :
 			gui_keepalive_order((uint16_t)IncomingOrdersIDs::hardware_reset_order, nullptr),
@@ -138,6 +146,7 @@ namespace VCU{
 			stop_traction_order(609, stop_traction),
 			stop_levitation_order(316, stop_levitation),
 			emergency_stop_order(200, emergency_stop),
+			test_current_control_order((uint16_t)IncomingOrdersIDs::test_current_control, test_current_control, &temp_coil_id, &temp_coil_value),
 			vehicle_reset_order((uint16_t)IncomingOrdersIDs::vehicle_reset, vehicle_reset)
 		{
 		}

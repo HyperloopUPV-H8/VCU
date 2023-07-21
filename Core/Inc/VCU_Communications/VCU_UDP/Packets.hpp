@@ -51,6 +51,7 @@ namespace VCU{
 		uint8_t trash_u8 = 0;
 		float trash_f = 0.0f;
 
+		Data<VEHICLE> data;
 		//INFO: Outgoing packets
 		StackPacket<9,VALVE_STATE, float, float> regulator_packet;
 		StackPacket<2, REED_STATE, REED_STATE> reeds_packet;
@@ -67,16 +68,23 @@ namespace VCU{
 		StackPacket<20, float, float, float, float, float> accelerations;
 
 		Packets(Data<VEHICLE>& data) :
+				data(data),
 				regulator_packet((uint16_t)PacketsIDs::vcu_regulator_packet, &data.valve_state, &data.regulator_reference_pressure, &data.regulator_real_pressure),
 				reeds_packet((uint16_t)PacketsIDs::vcu_reed_packet, &data.reed1, &data.reed2),
 				bottle_temperature_packet((uint16_t)PacketsIDs::vcu_bottle_temperature_packet, &data.bottle_temperature1, &data.bottle_temperature2),
 				pressure_packets((uint16_t)PacketsIDs::vcu_pressure_packet, &data.high_pressure1, &data.low_pressure1, &data.low_pressure2),
 				environmental_packet((uint16_t)PacketsIDs::vcu_environmental_packet, &data.enviremont_pressure, &data.enviroment_temperature),
 //				states_pac	ket((uint16_t)PacketsIDs::states_packet, data.general_state, data.specific_state, data.load_state, data.unload_state, data.traction_state, data.dynamic_lev, data.specific_state),
-				state_machines_packet((uint16_t)PacketsIDs::state_machines_packet, data.general_state, data.specific_state, data.voltage_state),
+				state_machines_packet((uint16_t)PacketsIDs::state_machines_packet, &data.n_g, &data.n_s, &data.n_v),
 				encoder_packet((uint16_t)PacketsIDs::encoder_packet, &data.tapes_direction, &data.tapes_position, &data.tapes_speed, &data.tapes_acceleration),
 				lcu_states_packet((uint16_t)PacketsIDs::lcu_master_state_machine_packet, &trash_u8, &trash_u8, &data.levitation_state, &trash_u8),
 				accelerations((uint16_t)PacketsIDs::accelerations, &trash_f, &trash_f, &trash_f, &data.engine_acceleration, &data.engine_speed)
 		{}
+
+		void init(){
+//			state_machines_packet.set_pointer(0, data.general_state);
+//			state_machines_packet.set_pointer(1, data.specific_state);
+//			state_machines_packet.set_pointer(2, data.voltage_state);
+		}
 	};
 }

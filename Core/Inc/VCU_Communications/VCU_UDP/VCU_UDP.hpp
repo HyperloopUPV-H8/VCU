@@ -46,17 +46,17 @@ namespace VCU{
         	BACKEND_CONNECTION = DatagramSocket(VCU_IP, 50400, BACKEND_IP, UDP_PORT);
         	BACKEND_CONNECTION.reconnect();
 //
-//        	OBCCU_CONNECTION = DatagramSocket(VCU_IP, 50402, OBCCU_IP, UDP_PORT);
-//        	OBCCU_CONNECTION.reconnect();
-//
-//        	BMSL_CONNECTION = DatagramSocket(VCU_IP, 50403, BMSL_IP, UDP_PORT);
-//        	BMSL_CONNECTION.reconnect();
-//
-//        	LCU_MASTER_CONNECTION = DatagramSocket(VCU_IP, 50404, LCU_MASTER_IP, UDP_PORT);
-//			LCU_MASTER_CONNECTION.reconnect();
-//
-//        	PCU_CONNECTION = DatagramSocket(VCU_IP, 50401, PCU_IP, UDP_PORT);
-//        	PCU_CONNECTION.reconnect();
+        	OBCCU_CONNECTION = DatagramSocket(VCU_IP, 50402, OBCCU_IP, UDP_PORT);
+        	OBCCU_CONNECTION.reconnect();
+
+        	BMSL_CONNECTION = DatagramSocket(VCU_IP, 50403, BMSL_IP, UDP_PORT);
+        	BMSL_CONNECTION.reconnect();
+
+        	LCU_MASTER_CONNECTION = DatagramSocket(VCU_IP, 50404, LCU_MASTER_IP, UDP_PORT);
+			LCU_MASTER_CONNECTION.reconnect();
+
+        	PCU_CONNECTION = DatagramSocket(VCU_IP, 50401, PCU_IP, UDP_PORT);
+        	PCU_CONNECTION.reconnect();
 
 
         }
@@ -66,19 +66,19 @@ namespace VCU{
         }
 
         void send_to_obccu(Packet& packet){
-//        	OBCCU_CONNECTION.send(packet);
+        	OBCCU_CONNECTION.send(packet);
         }
 
         void send_to_bmsl(Packet& packet){
-//        	BMSL_CONNECTION.send(packet);
+        	BMSL_CONNECTION.send(packet);
         }
 
         void send_to_pcu(Packet& packet){
-//        	PCU_CONNECTION.send(packet);
+        	PCU_CONNECTION.send(packet);
         }
 
         void send_to_lcu(Packet& packet){
-//        	LCU_MASTER_CONNECTION.send(packet);
+        	LCU_MASTER_CONNECTION.send(packet);
         }
 
     };

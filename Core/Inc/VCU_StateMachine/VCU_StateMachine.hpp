@@ -255,6 +255,7 @@ namespace VCU{
 		{
 			init();
 			data.general_state = &general_state_machine.current_state;
+
 		}
 		enum States : uint8_t{
 			INITIAL,
@@ -281,6 +282,7 @@ namespace VCU{
 //							tcp_timeout = true;
 						}
 					});
+
 				}, INITIAL);
 				Time::set_timeout(max_tcp_connection_timeout, [&](){
 					if(not (tcp_handler.check_connections())){

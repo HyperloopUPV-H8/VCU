@@ -197,17 +197,18 @@ namespace VCU{
 			RUNNING,
 			END
 		};
+		Data<VEHICLE>& data;
 		bool contactor_state = false;
 		bool is_levitating = false;
 		bool is_running = false;
-		double desired_position = 0.0;
+		double desired_position = 5.0;
 		StateMachine voltage_state_machine;
 		StateMachine specific_state_machine;
 		double& real_position;
 		TCP<VEHICLE>& tcp_handler;
 		IncomingOrders<VEHICLE>& incoming_orders;
 		Actuators<VEHICLE>& actuators;
-		SpecificStateMachine(Data<VEHICLE>& data, double& position, TCP<VEHICLE>& tcp_handler, IncomingOrders<VEHICLE>& incoming_orders, Actuators<VEHICLE>& actuators) : voltage_state_machine(NOT_HV), specific_state_machine(IDLE),real_position(position),tcp_handler(tcp_handler), incoming_orders(incoming_orders),
+		SpecificStateMachine(Data<VEHICLE>& data, double& position, TCP<VEHICLE>& tcp_handler, IncomingOrders<VEHICLE>& incoming_orders, Actuators<VEHICLE>& actuators) : data(data), voltage_state_machine(NOT_HV), specific_state_machine(IDLE),real_position(position),tcp_handler(tcp_handler), incoming_orders(incoming_orders),
 				actuators(actuators){
 			init();
 			data.specific_state = &specific_state_machine.current_state;
@@ -216,10 +217,19 @@ namespace VCU{
 		void init(){
 			voltage_state_machine.add_state(HV);
 			voltage_state_machine.add_transition(NOT_HV, HV, [&](){
-				return contactor_state;
+				if(  contactor_state){
+						*data.voltage_state = VoltageStates::HV;
+						return true;
+				}
+				return false;
 			});
 			voltage_state_machine.add_transition(HV, NOT_HV, [&](){
-				return not contactor_state;
+				if( not contactor_state){
+						*data.voltage_state = VoltageStates::NOT_HV;
+						return true;
+				}
+				return false;
+
 			});
 			voltage_state_machine.add_exit_action([&](){
 				tcp_handler.LCU_MASTER_CONNECTION.send_order(incoming_orders.stop_levitation_order);
@@ -230,10 +240,20 @@ namespace VCU{
 			specific_state_machine.add_state(RUNNING);
 			specific_state_machine.add_state(END);
 			specific_state_machine.add_transition(IDLE, LEVITATING, [&](){
-				return is_levitating;
+				if(is_levitating){
+					*data.specific_state = SpecificStates::LEVITATING;
+					return true;
+				}
+				return false;
+
 			});
 			specific_state_machine.add_transition(LEVITATING, RUNNING, [&](){
-				return is_running;
+				if(is_running){
+					*data.specific_state = SpecificStates::RUNNING;
+					return true;
+				}
+				return false;
+
 			});
 			specific_state_machine.add_transition(RUNNING, END, [&](){
 				return real_position >= desired_position;
@@ -243,8 +263,9 @@ namespace VCU{
 				tcp_handler.PCU_CONNECTION.send_order(incoming_orders.stop_traction_order);
 				tcp_handler.OBCCU_CONNECTION.send_order(incoming_orders.open_contactors_order);
 				actuators.brakes.brake();
+				*data.specific_state = SpecificStates::END;
 			}, END);
-			specific_state_machine.add_state_machine(specific_state_machine, HV);
+			voltage_state_machine.add_state_machine(specific_state_machine, HV);
 		}
 
 	};

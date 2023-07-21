@@ -57,16 +57,16 @@ namespace VCU{
 		void init(){
 			BACKEND_CONNECTION = ServerSocket(VCU_IP, SERVER_PORT, "Backend");
 
-//			OBCCU_CONNECTION = Socket(VCU_IP, CLIENT_PORT, OBCCU_IP, SERVER_PORT, "OBCCU");
+			OBCCU_CONNECTION = Socket(VCU_IP, CLIENT_PORT, OBCCU_IP, SERVER_PORT, "OBCCU");
 //			OBCCU_CONNECTION.reconnect();
 
-//			BMSL_CONNECTION = Socket(VCU_IP, CLIENT_PORT, BMSL_IP, SERVER_PORT, "BMSL");
+			BMSL_CONNECTION = Socket(VCU_IP, CLIENT_PORT, BMSL_IP, SERVER_PORT, "BMSL");
 //			BMSL_CONNECTION.reconnect();
 
-//			PCU_CONNECTION = Socket(VCU_IP, CLIENT_PORT, PCU_IP, SERVER_PORT, "PCU");
+			PCU_CONNECTION = Socket(VCU_IP, CLIENT_PORT, PCU_IP, SERVER_PORT, "PCU");
 ////		PCU_CONNECTION.reconnect();
 //
-//			LCU_MASTER_CONNECTION = Socket(VCU_IP, CLIENT_PORT, LCU_MASTER_IP, SERVER_PORT, "LCU_MASTER");
+			LCU_MASTER_CONNECTION = Socket(VCU_IP, CLIENT_PORT, LCU_MASTER_IP, SERVER_PORT, "LCU_MASTER");
 			ServerSocket::set_default_parser(order_parser);
 		}
 
@@ -75,41 +75,40 @@ namespace VCU{
         }
 
         void send_to_obccu(Order& order){
-//        	OBCCU_CONNECTION.send_order(order);
+        	OBCCU_CONNECTION.send_order(order);
         }
 
         void send_to_bsml(Order& order){
-//        	BMSL_CONNECTION.send_order(order);
+        	BMSL_CONNECTION.send_order(order);
         }
 
         void send_to_lcu(Order& order){
-//        	LCU_MASTER_CONNECTION.send_order(order);
+        	LCU_MASTER_CONNECTION.send_order(order);
         }
 
         void send_to_pcu(Order& order){
-//        	PCU_CONNECTION.send_order(order);
+        	PCU_CONNECTION.send_order(order);
         }
 
         bool check_connections(){
         	return
         	BACKEND_CONNECTION.is_connected()
-//			&&
-//			OBCCU_CONNECTION.is_connected()
-//			&&
-//			BMSL_CONNECTION.is_connected()
-//			&&
-//			LCU_MASTER_CONNECTION.is_connected()
-//			&&
-//			PCU_CONNECTION.is_connected()
-
+			&&
+			OBCCU_CONNECTION.is_connected()
+			&&
+			BMSL_CONNECTION.is_connected()
+			&&
+			LCU_MASTER_CONNECTION.is_connected()
+			&&
+			PCU_CONNECTION.is_connected()
 			;
         }
 
         void reconnect_all(){
-//			if(not OBCCU_CONNECTION.is_connected()) OBCCU_CONNECTION.reconnect();
-//			if(not BMSL_CONNECTION.is_connected()) BMSL_CONNECTION.reconnect();
-//			if(not LCU_MASTER_CONNECTION.is_connected()) LCU_MASTER_CONNECTION.reconnect();
-//			if(not PCU_CONNECTION.is_connected()) PCU_CONNECTION.reconnect();
+			if(not OBCCU_CONNECTION.is_connected()) OBCCU_CONNECTION.reconnect();
+			if(not BMSL_CONNECTION.is_connected()) BMSL_CONNECTION.reconnect();
+			if(not LCU_MASTER_CONNECTION.is_connected()) LCU_MASTER_CONNECTION.reconnect();
+			if(not PCU_CONNECTION.is_connected()) PCU_CONNECTION.reconnect();
 		}
 
         static bool auxiliar_socket_send(void* data, size_t size, Socket& socket){

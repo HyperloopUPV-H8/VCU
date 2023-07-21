@@ -236,7 +236,8 @@ namespace VCU{
             void init(){
             	regulator_actuator.init();
                 read();
-                enable_emergency_brakes();
+                disable_emergency_brakes();
+//                enable_em/ergency_brakes();
                 brake();
                 regulator_actuator.set_pressure(operating_pressure);
                 read();
